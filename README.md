@@ -1,23 +1,41 @@
 # KeyVault – License Management Desktop App
 
-**KeyVault** is a focused desktop application for storing, organizing, and managing software licenses. It is built with **Electron** (for the native window) and **Next.js** (for the UI) and follows a dark‑mode design.
+**KeyVault** is a streamlined desktop application designed to store, organize, and manage software licenses.  
+Built with **Electron** (native window) and **Next.js** (UI), it features a fully integrated dark-mode design.
 
-## Why this app?
-- **Drag‑able window** – Users can move the app by dragging the top bar or the sidebar, thanks to a custom `-webkit-app-region: drag` implementation.
-- **Consistent spacing** – The UI layout (sidebar, list, detail panel) has been tuned so that elements are not cramped, even when the detail view is empty.
-- **Rich license details** – Owner, website, license key, attached file, purchase/expiry dates, price, and Brew cask command are displayed in a compact, readable panel.
-- **Tag autocomplete & keyboard navigation** – Fast search with arrow‑key navigation and instant selection.
-- **Import / Export** – JSON‑based backup/restore for easy migration.
-- **Dark theme** – Unified dark appearance across the Electron window and the React UI.
+## Why This App?
+
+- **Automatic license metadata extraction**  
+  Dragging an application file into KeyVault automatically detects and fills in the app name, version, icon, and category — minimizing manual work.
+
+- **Consistent spacing**  
+  The UI layout (sidebar, list, detail panel) maintains comfortable spacing, even when the detail view is empty.
+
+- **Rich license details**  
+  Owner, website, license key, attachment, purchase/expiry dates, price, and Brew cask command are displayed in a clean and compact panel.
+
+- **Tag autocomplete & keyboard navigation**  
+  Fast tag search with ↑/↓/Enter/Escape support.
+
+- **Import / Export**  
+  JSON-based backup/restore for quick migration.
+
+- **Excel Export**  
+  Export license entries to `.xlsx` for external tracking or reporting.
+
+- **Dark theme**  
+  A unified dark UI across Electron and the React-based interface.
 
 ## Features
-- Window dragging via top bar and sidebar
-- Dark‑mode UI with custom title‑bar styling
+
+- Automatic extraction of app metadata (name, version, icon, category)
+- Custom dark-mode UI with styled title-bar
 - License list with search, tag filtering, and category navigation
-- Detail panel with all license metadata and actions (edit, delete, execute Brew command)
-- Tag autocomplete with keyboard support (↑/↓/Enter/Escape)
-- Import / Export JSON data
-- Responsive layout with optimized spacing for dense information display
+- Detail panel with full metadata and actions (edit, delete, execute Brew command)
+- Tag autocomplete with keyboard controls (↑/↓/Enter/Escape)
+- JSON import/export for backups
+- Excel export to `.xlsx`
+- Responsive layout optimized for dense information
 
 ![keyvaul_scrrenshot](https://github.com/user-attachments/assets/63a7df48-b5f0-41bd-a6c7-72451e49f92f)
 
