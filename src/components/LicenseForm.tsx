@@ -119,8 +119,19 @@ export function LicenseForm({ initialData, licenseId, isEdit = false, onSuccess,
         e.preventDefault();
         if (!formData.name) return;
 
+        // Check for duplicate names (case-insensitive)
+        const isDuplicate = licenses.some(license =>
+            license.name.toLowerCase() === formData.name!.toLowerCase() &&
+            license.id !== (licenseToEdit?.id || initialData?.id)
+        );
+
+        if (isDuplicate) {
+            alert(t('duplicateNameError'));
+            return;
+        }
+
         const licenseData: License = {
-            id: initialData?.id || crypto.randomUUID(),
+            id: initialData?.id || licenseToEdit?.id || crypto.randomUUID(),
             name: formData.name!,
             category: formData.category as Category || 'Other',
             version: formData.version,
@@ -137,7 +148,7 @@ export function LicenseForm({ initialData, licenseId, isEdit = false, onSuccess,
             brewCaskCommand: formData.brewCaskCommand,
         };
 
-        if (isEdit) {
+        if (effectiveIsEdit) {
             await updateLicense(licenseData);
         } else {
             await addLicense(licenseData);
