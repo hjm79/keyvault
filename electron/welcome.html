@@ -1,0 +1,214 @@
+<!DOCTYPE html>
+<html lang="ko">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>KeyVault - 환영합니다</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container {
+            background: white;
+            border-radius: 20px;
+            padding: 40px;
+            max-width: 500px;
+            width: 100%;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+            text-align: center;
+        }
+
+        .logo {
+            width: 200px;
+            height: auto;
+            margin-bottom: 30px;
+            animation: fadeInUp 0.6s ease-out;
+        }
+
+        h1 {
+            color: #2d3748;
+            font-size: 28px;
+            margin-bottom: 20px;
+            animation: fadeInUp 0.6s ease-out 0.1s both;
+        }
+
+        .message {
+            color: #4a5568;
+            font-size: 16px;
+            line-height: 1.6;
+            margin-bottom: 30px;
+            animation: fadeInUp 0.6s ease-out 0.2s both;
+        }
+
+        .blog-link {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            color: #667eea;
+            text-decoration: none;
+            font-weight: 600;
+            font-size: 18px;
+            padding: 12px 24px;
+            border: 2px solid #667eea;
+            border-radius: 10px;
+            transition: all 0.3s ease;
+            margin-bottom: 30px;
+            animation: fadeInUp 0.6s ease-out 0.3s both;
+        }
+
+        .blog-link:hover {
+            background: #667eea;
+            color: white;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(102, 126, 234, 0.4);
+        }
+
+        .storage-section {
+            margin-top: 30px;
+            padding-top: 30px;
+            border-top: 2px solid #e2e8f0;
+            animation: fadeInUp 0.6s ease-out 0.4s both;
+        }
+
+        .storage-section h2 {
+            color: #2d3748;
+            font-size: 20px;
+            margin-bottom: 15px;
+        }
+
+        .storage-options {
+            display: flex;
+            gap: 15px;
+            justify-content: center;
+            margin-top: 20px;
+        }
+
+        .storage-btn {
+            flex: 1;
+            padding: 15px 20px;
+            border: none;
+            border-radius: 10px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .storage-btn.icloud {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+        }
+
+        .storage-btn.icloud:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(102, 126, 234, 0.4);
+        }
+
+        .storage-btn.local {
+            background: #f7fafc;
+            color: #2d3748;
+            border: 2px solid #e2e8f0;
+        }
+
+        .storage-btn.local:hover {
+            background: #edf2f7;
+            transform: translateY(-2px);
+        }
+
+        .storage-btn:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+
+        .storage-info {
+            color: #718096;
+            font-size: 14px;
+            margin-top: 15px;
+            line-height: 1.5;
+        }
+
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <div class="container">
+        <img src="logo.png" alt="HJM Logo" class="logo">
+
+        <h1>환영합니다! 🎉</h1>
+
+        <div class="message">
+            <p>프로그램을 이용해주셔서 감사합니다.</p>
+            <p>제가 사용할 용도로 작성했습니다. 많이 이용 부탁드립니다.</p>
+        </div>
+
+        <a href="#" class="blog-link" onclick="openBlog(); return false;">
+            🌐 https://hjm79.top
+        </a>
+
+        <div class="storage-section">
+            <h2>저장 위치 선택</h2>
+            <p class="storage-info" id="storage-info">
+                iCloud Drive를 선택하면 여러 Mac 간 자동 동기화가 가능합니다.
+                (폴더명: KeyVault)
+            </p>
+            <div class="storage-options">
+                <button class="storage-btn icloud" id="icloud-btn" onclick="selectStorage(true)">
+                    ☁️ iCloud Drive
+                </button>
+                <button class="storage-btn local" onclick="selectStorage(false)">
+                    💻 로컬 (내 Mac)
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Check iCloud availability
+        window.electronAPI.getStorageLocation().then(info => {
+            if (!info.iCloudAvailable) {
+                const icloudBtn = document.getElementById('icloud-btn');
+                icloudBtn.disabled = true;
+                icloudBtn.textContent = '☁️ iCloud 사용 불가';
+                document.getElementById('storage-info').textContent =
+                    'iCloud Drive가 비활성화되어 있습니다. 로컬 저장소를 사용합니다.';
+            }
+        });
+
+        function openBlog() {
+            window.electronAPI.openExternal('https://hjm79.top');
+        }
+
+        function selectStorage(useICloud) {
+            window.electronAPI.setStorageLocation(useICloud).then(() => {
+                window.close();
+            });
+        }
+    </script>
+</body>
+
+</html>
