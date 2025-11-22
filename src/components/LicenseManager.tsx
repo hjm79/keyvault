@@ -33,6 +33,38 @@ export function LicenseManager() {
         }
     }, []);
 
+    // Auto-lock after 5 minutes of inactivity
+    useEffect(() => {
+        if (!isAuthenticated) return;
+
+        let timeoutId: NodeJS.Timeout;
+
+        const resetTimer = () => {
+            clearTimeout(timeoutId);
+            timeoutId = setTimeout(() => {
+                setIsAuthenticated(false);
+            }, 300000); // 5 minutes = 300,000 ms
+        };
+
+        // Activity events to track
+        const events = ['mousemove', 'mousedown', 'keydown', 'scroll', 'touchstart'];
+
+        events.forEach(event => {
+            window.addEventListener(event, resetTimer);
+        });
+
+        // Start initial timer
+        resetTimer();
+
+        // Cleanup on unmount or when authentication changes
+        return () => {
+            clearTimeout(timeoutId);
+            events.forEach(event => {
+                window.removeEventListener(event, resetTimer);
+            });
+        };
+    }, [isAuthenticated]);
+
     // Filter licenses based on category and search query
     const filteredLicenses = useMemo(() => {
         let result = licenses || [];
