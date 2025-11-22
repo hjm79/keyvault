@@ -9,19 +9,14 @@ import {
     Plus,
     Settings,
     Key,
-    FileText,
     Download,
     Upload,
-    Archive,
-    Star,
-    BookOpen,
     Tag,
     Sun,
     Moon,
     Monitor,
-    MoreVertical,
     Edit2,
-    Trash2
+    FileSpreadsheet
 } from "lucide-react";
 import { Category } from "@/types";
 import { useTheme } from "./ThemeProvider";
@@ -31,18 +26,18 @@ import { cn } from "@/lib/utils";
 import { CategoryModal } from "./CategoryModal";
 
 interface SidebarProps {
+    currentView: 'list' | 'create' | 'edit' | 'settings';
+    onNavigate: (view: 'list' | 'create' | 'edit' | 'settings') => void;
     selectedCategory: string | null;
     onSelectCategory: (category: string | null) => void;
-    licenses: Array<{ category: string }>;
-    onNavigate: (view: 'list' | 'create' | 'settings') => void;
 }
 
-export function Sidebar({ selectedCategory, onSelectCategory, licenses, onNavigate }: SidebarProps) {
+export function Sidebar({ currentView, onNavigate, selectedCategory, onSelectCategory }: SidebarProps) {
     const pathname = usePathname();
     const router = useRouter();
     const { theme, setTheme } = useTheme();
     const { t } = useLanguage();
-    const { categories, addCategory, updateCategory, deleteCategory } = useLicenses();
+    const { categories, addCategory, updateCategory, deleteCategory, licenses } = useLicenses();
     const [isProcessing, setIsProcessing] = useState(false);
 
     // Category Modal State
@@ -64,10 +59,11 @@ export function Sidebar({ selectedCategory, onSelectCategory, licenses, onNaviga
         setTheme(themeOptions[nextIndex].value);
     };
 
-    // Calculate category counts
-    const getCategoryCount = (category: string) => {
-        return licenses.filter(license => license.category === category).length;
-    };
+    // Calculate counts for each category
+    const categoryCounts = (categories || []).reduce((acc, category) => {
+        acc[category] = (licenses || []).filter(l => l.category === category).length;
+        return acc;
+    }, {} as Record<string, number>);
 
     // Export/Import handlers
     const handleExport = async () => {
@@ -142,31 +138,22 @@ export function Sidebar({ selectedCategory, onSelectCategory, licenses, onNaviga
     };
 
     return (
-        <div className="flex h-full w-64 flex-col bg-slate-800 dark:bg-slate-800 text-white shrink-0 border-r border-slate-700">
+        <div className="flex h-full w-64 flex-col bg-slate-800 dark:bg-slate-800 text-white shrink-0 border-r border-slate-700 select-none">
             {/* Draggable titlebar region for macOS window dragging */}
             <div
                 className="flex items-center px-4 pt-8 pb-4 border-b border-slate-700"
                 style={{ WebkitAppRegion: 'drag' } as React.CSSProperties}
             >
                 <img
-                    src="./logo.png"
+                    src="./icon.png"
                     alt="KeyVault"
-                    className="h-10 w-10 object-contain"
+                    className="h-8 w-8 object-contain rounded-lg"
                     style={{ WebkitAppRegion: 'no-drag' } as React.CSSProperties}
                 />
                 <span className="ml-3 text-lg font-semibold">KeyVault</span>
             </div>
 
             <div className="flex-1 overflow-y-auto py-4 px-3 space-y-6">
-                {/* Add License Button */}
-                <button
-                    onClick={() => onNavigate('create')}
-                    className="w-full flex items-center justify-center px-4 py-3 text-sm font-semibold rounded-md bg-indigo-600 text-white hover:bg-indigo-700 transition-colors shadow-md"
-                >
-                    <Plus className="mr-2 h-5 w-5" />
-                    {t('addLicense')}
-                </button>
-
                 {/* Main Navigation */}
                 <div className="space-y-1">
                     <button
@@ -175,13 +162,13 @@ export function Sidebar({ selectedCategory, onSelectCategory, licenses, onNaviga
                             onNavigate('list');
                         }}
                         className={cn(
-                            "w-full flex items-center px-3 py-2 text-sm font-medium rounded-md transition-colors",
+                            "group w-full flex items-center px-3 py-2 text-sm font-medium rounded-md transition-colors",
                             selectedCategory === null
                                 ? "bg-slate-800 text-white"
                                 : "text-slate-400 hover:bg-slate-800 hover:text-white"
                         )}
                     >
-                        <Key className="mr-3 h-5 w-5" />
+                        <Key className="mr-3 h-5 w-5 transition-transform duration-200 group-hover:scale-[1.15]" />
                         {t('allKeys')}
                     </button>
                 </div>
@@ -191,18 +178,41 @@ export function Sidebar({ selectedCategory, onSelectCategory, licenses, onNaviga
                     <button
                         onClick={handleImport}
                         disabled={isProcessing}
-                        className="w-full flex items-center px-3 py-2 text-sm font-medium rounded-md text-slate-400 hover:bg-slate-800 hover:text-white transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+                        className="group w-full flex items-center px-3 py-2 text-sm font-medium rounded-md text-slate-400 hover:bg-slate-800 hover:text-white transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
                     >
-                        <Upload className="mr-3 h-5 w-5" />
+                        <Upload className="mr-3 h-5 w-5 transition-transform duration-200 group-hover:scale-[1.15]" />
                         {t('import')}
                     </button>
                     <button
                         onClick={handleExport}
                         disabled={isProcessing}
-                        className="w-full flex items-center px-3 py-2 text-sm font-medium rounded-md text-slate-400 hover:bg-slate-800 hover:text-white transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+                        className="group w-full flex items-center px-3 py-2 text-sm font-medium rounded-md text-slate-400 hover:bg-slate-800 hover:text-white transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
                     >
-                        <Download className="mr-3 h-5 w-5" />
+                        <Download className="mr-3 h-5 w-5 transition-transform duration-200 group-hover:scale-[1.15]" />
                         {t('export')}
+                    </button>
+                    <button
+                        onClick={async () => {
+                            if (!window.electronAPI || isProcessing) return;
+                            setIsProcessing(true);
+                            try {
+                                const result = await window.electronAPI.exportLicensesExcel();
+                                if (result.success) {
+                                    alert(`${t('exportExcelSuccess')}: ${result.count}\n${result.path}`);
+                                } else if (!result.canceled) {
+                                    alert(`Export failed: ${result.error}`);
+                                }
+                            } catch (error) {
+                                alert(`Export failed: ${error}`);
+                            } finally {
+                                setIsProcessing(false);
+                            }
+                        }}
+                        disabled={isProcessing}
+                        className="group w-full flex items-center px-3 py-2 text-sm font-medium rounded-md text-slate-400 hover:bg-slate-800 hover:text-white transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+                    >
+                        <FileSpreadsheet className="mr-3 h-5 w-5 transition-transform duration-200 group-hover:scale-[1.15]" />
+                        {t('exportExcel')}
                     </button>
                 </div>
 
@@ -216,7 +226,7 @@ export function Sidebar({ selectedCategory, onSelectCategory, licenses, onNaviga
                     </div>
                     <div className="space-y-1">
                         {categories.map((category) => {
-                            const count = getCategoryCount(category);
+                            const count = categoryCounts[category] || 0;
                             return (
                                 <div
                                     key={category}
@@ -232,7 +242,7 @@ export function Sidebar({ selectedCategory, onSelectCategory, licenses, onNaviga
                                     }}
                                 >
                                     <div className="flex items-center flex-1 min-w-0">
-                                        <Tag className="mr-3 h-4 w-4 shrink-0" />
+                                        <Tag className="mr-3 h-4 w-4 shrink-0 transition-transform duration-200 group-hover:scale-[1.15]" />
                                         <span className="truncate">{category}</span>
                                     </div>
                                     <div className="flex items-center space-x-2">

@@ -4,7 +4,7 @@ import { useState, useEffect } from "react";
 import { useLicenses } from "@/hooks/useLicenses";
 import { useTheme } from "@/components/ThemeProvider";
 import { useLanguage } from "@/components/LanguageProvider";
-import { Settings, Cloud, HardDrive, Sun, Moon, Monitor, Trash2, Info, ExternalLink, Globe } from "lucide-react";
+import { Settings, Cloud, HardDrive, Sun, Moon, Monitor, Trash2, Info, ExternalLink, Globe, FolderOpen } from "lucide-react";
 
 export function SettingsPanel() {
     const { licenses } = useLicenses();
@@ -73,9 +73,12 @@ export function SettingsPanel() {
     ];
 
     return (
-        <div className="h-full overflow-y-auto p-8 bg-slate-50 dark:bg-slate-900">
+        <div className="h-full overflow-y-auto bg-slate-50 dark:bg-slate-900">
             <div className="mx-auto max-w-4xl">
-                <div className="mb-8">
+                <div
+                    className="mb-8 p-8 pb-4"
+                    style={{ WebkitAppRegion: 'drag' } as React.CSSProperties}
+                >
                     <h1 className="text-3xl font-bold text-slate-900 dark:text-white flex items-center gap-3">
                         <Settings className="h-8 w-8" />
                         {t('settingsTitle')}
@@ -85,191 +88,207 @@ export function SettingsPanel() {
                     </p>
                 </div>
 
-                <div className="space-y-6">
-                    {/* Language Settings */}
-                    <div className="rounded-lg bg-white dark:bg-slate-800 p-6 shadow-sm">
-                        <h2 className="text-xl font-semibold text-slate-900 dark:text-white mb-4 flex items-center gap-2">
-                            <Globe className="h-5 w-5" />
-                            {t('language')}
-                        </h2>
+                <div className="px-8">
 
-                        <div className="grid grid-cols-2 gap-4">
-                            {languageOptions.map((option) => {
-                                const isActive = language === option.value;
-                                return (
-                                    <button
-                                        key={option.value}
-                                        onClick={() => setLanguage(option.value)}
-                                        className={`p-4 rounded-lg border-2 transition-all ${isActive
-                                            ? "border-indigo-500 bg-indigo-50 dark:bg-indigo-900/20"
-                                            : "border-slate-300 dark:border-slate-600 hover:border-indigo-400"
-                                            }`}
-                                    >
-                                        <div className="font-semibold text-slate-900 dark:text-white text-center">
-                                            {option.label}
-                                        </div>
-                                    </button>
-                                );
-                            })}
+                    <div className="space-y-6">
+                        {/* Language Settings */}
+                        <div className="rounded-lg bg-white dark:bg-slate-800 p-6 shadow-sm">
+                            <h2 className="text-xl font-semibold text-slate-900 dark:text-white mb-4 flex items-center gap-2">
+                                <Globe className="h-5 w-5" />
+                                {t('language')}
+                            </h2>
+
+                            <div className="grid grid-cols-2 gap-4">
+                                {languageOptions.map((option) => {
+                                    const isActive = language === option.value;
+                                    return (
+                                        <button
+                                            key={option.value}
+                                            onClick={() => setLanguage(option.value)}
+                                            className={`p-4 rounded-lg border-2 transition-all ${isActive
+                                                ? "border-indigo-500 bg-indigo-50 dark:bg-indigo-900/20"
+                                                : "border-slate-300 dark:border-slate-600 hover:border-indigo-400"
+                                                }`}
+                                        >
+                                            <div className="font-semibold text-slate-900 dark:text-white text-center">
+                                                {option.label}
+                                            </div>
+                                        </button>
+                                    );
+                                })}
+                            </div>
                         </div>
-                    </div>
 
-                    {/* Storage Location */}
-                    <div className="rounded-lg bg-white dark:bg-slate-800 p-6 shadow-sm">
-                        <h2 className="text-xl font-semibold text-slate-900 dark:text-white mb-4 flex items-center gap-2">
-                            <Cloud className="h-5 w-5" />
-                            {t('storageLocation')}
-                        </h2>
+                        {/* Storage Location */}
+                        <div className="rounded-lg bg-white dark:bg-slate-800 p-6 shadow-sm">
+                            <h2 className="text-xl font-semibold text-slate-900 dark:text-white mb-4 flex items-center gap-2">
+                                <Cloud className="h-5 w-5" />
+                                {t('storageLocation')}
+                            </h2>
 
-                        {isLoading ? (
-                            <p className="text-slate-500">{t('loading')}</p>
-                        ) : (
-                            <>
-                                <div className="mb-4 p-4 bg-slate-50 dark:bg-slate-700 rounded-lg">
-                                    <p className="text-sm text-slate-600 dark:text-slate-300 mb-1">{t('currentLocation')}</p>
-                                    <p className="font-mono text-sm text-slate-900 dark:text-white break-all">
-                                        {storageInfo?.currentPath}
+                            {isLoading ? (
+                                <p className="text-slate-500">{t('loading')}</p>
+                            ) : (
+                                <>
+                                    <div className="mb-4 p-4 bg-slate-50 dark:bg-slate-700 rounded-lg">
+                                        <div className="flex items-center justify-between mb-2">
+                                            <p className="text-sm text-slate-600 dark:text-slate-300">{t('currentLocation')}</p>
+                                            <button
+                                                onClick={() => {
+                                                    if (window.electronAPI && storageInfo?.currentPath) {
+                                                        window.electronAPI.showItemInFolder(storageInfo.currentPath);
+                                                    }
+                                                }}
+                                                className="flex items-center gap-2 px-4 py-2 text-sm font-medium text-indigo-600 dark:text-indigo-400 hover:bg-indigo-50 dark:hover:bg-indigo-900/20 rounded-lg transition-all hover:scale-105"
+                                            >
+                                                <FolderOpen className="h-4 w-4" />
+                                                Finder
+                                            </button>
+                                        </div>
+                                        <p className="font-mono text-sm text-slate-900 dark:text-white break-all">
+                                            {storageInfo?.currentPath}
+                                        </p>
+                                    </div>
+
+                                    <div className="grid grid-cols-2 gap-4">
+                                        <button
+                                            onClick={() => handleStorageChange(true)}
+                                            disabled={!storageInfo?.iCloudAvailable || storageInfo?.useICloud}
+                                            className={`p-4 rounded-lg border-2 transition-all ${storageInfo?.useICloud
+                                                ? "border-indigo-500 bg-indigo-50 dark:bg-indigo-900/20"
+                                                : "border-slate-300 dark:border-slate-600 hover:border-indigo-400"
+                                                } disabled:opacity-50 disabled:cursor-not-allowed`}
+                                        >
+                                            <Cloud className="h-6 w-6 mx-auto mb-2 text-indigo-600 dark:text-indigo-400" />
+                                            <div className="font-semibold text-slate-900 dark:text-white">{t('iCloudDrive')}</div>
+                                            <div className="text-sm text-slate-500 dark:text-slate-400 mt-1">
+                                                {storageInfo?.iCloudAvailable ? t('iCloudDesc') : "N/A"}
+                                            </div>
+                                        </button>
+
+                                        <button
+                                            onClick={() => handleStorageChange(false)}
+                                            disabled={!storageInfo?.useICloud}
+                                            className={`p-4 rounded-lg border-2 transition-all ${!storageInfo?.useICloud
+                                                ? "border-indigo-500 bg-indigo-50 dark:bg-indigo-900/20"
+                                                : "border-slate-300 dark:border-slate-600 hover:border-indigo-400"
+                                                } disabled:opacity-50 disabled:cursor-not-allowed`}
+                                        >
+                                            <HardDrive className="h-6 w-6 mx-auto mb-2 text-indigo-600 dark:text-indigo-400" />
+                                            <div className="font-semibold text-slate-900 dark:text-white">{t('local')}</div>
+                                            <div className="text-sm text-slate-500 dark:text-slate-400 mt-1">
+                                                {t('localDesc')}
+                                            </div>
+                                        </button>
+                                    </div>
+
+                                    <p className="mt-4 text-sm text-amber-600 dark:text-amber-400">
+                                        {t('storageWarning')}
                                     </p>
-                                </div>
-
-                                <div className="grid grid-cols-2 gap-4">
-                                    <button
-                                        onClick={() => handleStorageChange(true)}
-                                        disabled={!storageInfo?.iCloudAvailable || storageInfo?.useICloud}
-                                        className={`p-4 rounded-lg border-2 transition-all ${storageInfo?.useICloud
-                                            ? "border-indigo-500 bg-indigo-50 dark:bg-indigo-900/20"
-                                            : "border-slate-300 dark:border-slate-600 hover:border-indigo-400"
-                                            } disabled:opacity-50 disabled:cursor-not-allowed`}
-                                    >
-                                        <Cloud className="h-6 w-6 mx-auto mb-2 text-indigo-600 dark:text-indigo-400" />
-                                        <div className="font-semibold text-slate-900 dark:text-white">{t('iCloudDrive')}</div>
-                                        <div className="text-sm text-slate-500 dark:text-slate-400 mt-1">
-                                            {storageInfo?.iCloudAvailable ? t('iCloudDesc') : "N/A"}
-                                        </div>
-                                    </button>
-
-                                    <button
-                                        onClick={() => handleStorageChange(false)}
-                                        disabled={!storageInfo?.useICloud}
-                                        className={`p-4 rounded-lg border-2 transition-all ${!storageInfo?.useICloud
-                                            ? "border-indigo-500 bg-indigo-50 dark:bg-indigo-900/20"
-                                            : "border-slate-300 dark:border-slate-600 hover:border-indigo-400"
-                                            } disabled:opacity-50 disabled:cursor-not-allowed`}
-                                    >
-                                        <HardDrive className="h-6 w-6 mx-auto mb-2 text-indigo-600 dark:text-indigo-400" />
-                                        <div className="font-semibold text-slate-900 dark:text-white">{t('local')}</div>
-                                        <div className="text-sm text-slate-500 dark:text-slate-400 mt-1">
-                                            {t('localDesc')}
-                                        </div>
-                                    </button>
-                                </div>
-
-                                <p className="mt-4 text-sm text-amber-600 dark:text-amber-400">
-                                    {t('storageWarning')}
-                                </p>
-                            </>
-                        )}
-                    </div>
-
-                    {/* Theme Settings */}
-                    <div className="rounded-lg bg-white dark:bg-slate-800 p-6 shadow-sm">
-                        <h2 className="text-xl font-semibold text-slate-900 dark:text-white mb-4 flex items-center gap-2">
-                            <Sun className="h-5 w-5" />
-                            {t('themeSettings')}
-                        </h2>
-
-                        <div className="grid grid-cols-3 gap-4">
-                            {themeOptions.map((option) => {
-                                const Icon = option.icon;
-                                const isActive = theme === option.value;
-
-                                return (
-                                    <button
-                                        key={option.value}
-                                        onClick={() => setTheme(option.value)}
-                                        className={`p-4 rounded-lg border-2 transition-all ${isActive
-                                            ? "border-indigo-500 bg-indigo-50 dark:bg-indigo-900/20"
-                                            : "border-slate-300 dark:border-slate-600 hover:border-indigo-400"
-                                            }`}
-                                    >
-                                        <Icon className="h-6 w-6 mx-auto mb-2 text-indigo-600 dark:text-indigo-400" />
-                                        <div className="font-semibold text-slate-900 dark:text-white">
-                                            {option.label}
-                                        </div>
-                                    </button>
-                                );
-                            })}
+                                </>
+                            )}
                         </div>
-                    </div>
 
-                    {/* Data Management */}
-                    <div className="rounded-lg bg-white dark:bg-slate-800 p-6 shadow-sm">
-                        <h2 className="text-xl font-semibold text-slate-900 dark:text-white mb-4 flex items-center gap-2">
-                            <Trash2 className="h-5 w-5" />
-                            {t('dataManagement')}
-                        </h2>
+                        {/* Theme Settings */}
+                        <div className="rounded-lg bg-white dark:bg-slate-800 p-6 shadow-sm">
+                            <h2 className="text-xl font-semibold text-slate-900 dark:text-white mb-4 flex items-center gap-2">
+                                <Sun className="h-5 w-5" />
+                                {t('themeSettings')}
+                            </h2>
 
-                        <div className="space-y-4">
-                            <p className="text-slate-600 dark:text-slate-400">
-                                {t('dataResetDesc')}
-                            </p>
+                            <div className="grid grid-cols-3 gap-4">
+                                {themeOptions.map((option) => {
+                                    const Icon = option.icon;
+                                    const isActive = theme === option.value;
 
-                            <button
-                                onClick={handleDataReset}
-                                className="px-6 py-3 bg-red-600 text-white rounded-lg hover:bg-red-700 transition-colors font-semibold flex items-center gap-2"
-                            >
+                                    return (
+                                        <button
+                                            key={option.value}
+                                            onClick={() => setTheme(option.value)}
+                                            className={`p-4 rounded-lg border-2 transition-all ${isActive
+                                                ? "border-indigo-500 bg-indigo-50 dark:bg-indigo-900/20"
+                                                : "border-slate-300 dark:border-slate-600 hover:border-indigo-400"
+                                                }`}
+                                        >
+                                            <Icon className="h-6 w-6 mx-auto mb-2 text-indigo-600 dark:text-indigo-400" />
+                                            <div className="font-semibold text-slate-900 dark:text-white">
+                                                {option.label}
+                                            </div>
+                                        </button>
+                                    );
+                                })}
+                            </div>
+                        </div>
+
+                        {/* Data Management */}
+                        <div className="rounded-lg bg-white dark:bg-slate-800 p-6 shadow-sm">
+                            <h2 className="text-xl font-semibold text-slate-900 dark:text-white mb-4 flex items-center gap-2">
                                 <Trash2 className="h-5 w-5" />
-                                {t('deleteAllData')}
-                            </button>
-                        </div>
-                    </div>
+                                {t('dataManagement')}
+                            </h2>
 
-                    {/* App Info */}
-                    <div className="rounded-lg bg-white dark:bg-slate-800 p-6 shadow-sm">
-                        <h2 className="text-xl font-semibold text-slate-900 dark:text-white mb-4 flex items-center gap-2">
-                            <Info className="h-5 w-5" />
-                            {t('appInfo')}
-                        </h2>
+                            <div className="space-y-4">
+                                <p className="text-slate-600 dark:text-slate-400">
+                                    {t('dataResetDesc')}
+                                </p>
 
-                        {/* Logo */}
-                        <div className="flex justify-center mb-6">
-                            <img
-                                src="./logo.png"
-                                alt="HJM Logo"
-                                className="w-32 h-auto"
-                            />
-                        </div>
-
-                        <div className="space-y-3">
-                            <div className="flex justify-between items-center py-2 border-b border-slate-200 dark:border-slate-700">
-                                <span className="text-slate-600 dark:text-slate-400">{t('appName')}</span>
-                                <span className="font-semibold text-slate-900 dark:text-white">KeyVault</span>
-                            </div>
-
-                            <div className="flex justify-between items-center py-2 border-b border-slate-200 dark:border-slate-700">
-                                <span className="text-slate-600 dark:text-slate-400">{t('version')}</span>
-                                <span className="font-semibold text-slate-900 dark:text-white">1.0.0</span>
-                            </div>
-
-                            <div className="flex justify-between items-center py-2 border-b border-slate-200 dark:border-slate-700">
-                                <span className="text-slate-600 dark:text-slate-400">{t('developer')}</span>
-                                <span className="font-semibold text-slate-900 dark:text-white">마니의블로그</span>
-                            </div>
-
-                            <div className="flex justify-between items-center py-2">
-                                <span className="text-slate-600 dark:text-slate-400">{t('blog')}</span>
                                 <button
-                                    onClick={openBlog}
-                                    className="font-semibold text-indigo-600 dark:text-indigo-400 hover:underline flex items-center gap-1"
+                                    onClick={handleDataReset}
+                                    className="px-6 py-3 bg-red-600 text-white rounded-lg hover:bg-red-700 transition-colors font-semibold flex items-center gap-2"
                                 >
-                                    https://hjm79.top
-                                    <ExternalLink className="h-4 w-4" />
+                                    <Trash2 className="h-5 w-5" />
+                                    {t('deleteAllData')}
                                 </button>
+                            </div>
+                        </div>
+
+                        {/* App Info */}
+                        <div className="rounded-lg bg-white dark:bg-slate-800 p-6 shadow-sm">
+                            <h2 className="text-xl font-semibold text-slate-900 dark:text-white mb-4 flex items-center gap-2">
+                                <Info className="h-5 w-5" />
+                                {t('appInfo')}
+                            </h2>
+
+                            {/* Logo */}
+                            <div className="flex justify-center mb-6">
+                                <img
+                                    src="./logo.png"
+                                    alt="HJM Logo"
+                                    className="w-32 h-auto"
+                                />
+                            </div>
+
+                            <div className="space-y-3">
+                                <div className="flex justify-between items-center py-2 border-b border-slate-200 dark:border-slate-700">
+                                    <span className="text-slate-600 dark:text-slate-400">{t('appName')}</span>
+                                    <span className="font-semibold text-slate-900 dark:text-white">KeyVault</span>
+                                </div>
+
+                                <div className="flex justify-between items-center py-2 border-b border-slate-200 dark:border-slate-700">
+                                    <span className="text-slate-600 dark:text-slate-400">{t('version')}</span>
+                                    <span className="font-semibold text-slate-900 dark:text-white">1.2.0</span>
+                                </div>
+
+                                <div className="flex justify-between items-center py-2 border-b border-slate-200 dark:border-slate-700">
+                                    <span className="text-slate-600 dark:text-slate-400">{t('developer')}</span>
+                                    <span className="font-semibold text-slate-900 dark:text-white">마니의블로그</span>
+                                </div>
+
+                                <div className="flex justify-between items-center py-2">
+                                    <span className="text-slate-600 dark:text-slate-400">{t('blog')}</span>
+                                    <button
+                                        onClick={openBlog}
+                                        className="font-semibold text-indigo-600 dark:text-indigo-400 hover:underline flex items-center gap-1"
+                                    >
+                                        https://hjm79.top
+                                        <ExternalLink className="h-4 w-4" />
+                                    </button>
+                                </div>
                             </div>
                         </div>
                     </div>
                 </div>
             </div>
-        </div>
+        </div >
     );
 }

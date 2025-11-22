@@ -5,28 +5,7 @@ import { License } from "@/types";
 
 const STORAGE_KEY = "app_licenses";
 
-declare global {
-    interface Window {
-        electronAPI?: {
-            loadLicenses: () => Promise<License[]>;
-            saveLicenses: (licenses: License[]) => Promise<{ success: boolean; error?: string }>;
-            loadCategories: () => Promise<string[]>;
-            saveCategories: (categories: string[]) => Promise<{ success: boolean; error?: string }>;
-            getAppInfo: (path: string) => Promise<{ success: boolean; data?: { name: string; version: string; category: string; icon: string }; error?: string }>;
-            getFilePath: (file: File) => string;
-            openPath: (path: string) => Promise<{ success: boolean; error?: string }>;
-            showItemInFolder: (path: string) => Promise<{ success: boolean; error?: string }>;
-            copyFile: (path: string) => Promise<{ success: boolean; path?: string; error?: string }>;
-            exportLicensesJSON: () => Promise<{ success: boolean; path?: string; count?: number; canceled?: boolean; error?: string }>;
-            exportLicensesZIP: () => Promise<{ success: boolean; path?: string; count?: number; canceled?: boolean; error?: string }>;
-            importLicenses: () => Promise<{ success: boolean; imported?: number; skipped?: number; total?: number; canceled?: boolean; error?: string }>;
-            getStorageLocation: () => Promise<{ iCloudAvailable: boolean; useICloud: boolean; currentPath: string; dataFile: string; filesDir: string }>;
-            setStorageLocation: (useICloud: boolean) => Promise<{ success: boolean; path?: string; error?: string }>;
-            openExternal: (url: string) => Promise<{ success: boolean; error?: string }>;
-            executeTerminalCommand: (command: string) => Promise<{ success: boolean; error?: string }>;
-        };
-    }
-}
+
 
 interface LicensesContextType {
     licenses: License[];
@@ -67,8 +46,8 @@ export function LicensesProvider({ children }: { children: React.ReactNode }) {
                     console.error("Failed to load categories from Electron:", e);
                 }
 
-                setLicenses(loadedLicenses);
-                setCategories(loadedCategories.length > 0 ? loadedCategories : DEFAULT_CATEGORIES);
+                setLicenses(Array.isArray(loadedLicenses) ? loadedLicenses : []);
+                setCategories(Array.isArray(loadedCategories) && loadedCategories.length > 0 ? loadedCategories : DEFAULT_CATEGORIES);
             } else if (typeof window !== 'undefined') {
                 // Browser Environment (Fallback)
                 const storedLicenses = localStorage.getItem(STORAGE_KEY);

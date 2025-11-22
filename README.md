@@ -1,39 +1,48 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# KeyVault – License Management Desktop App
+
+**KeyVault** is a focused desktop application for storing, organizing, and managing software licenses. It is built with **Electron** (for the native window) and **Next.js** (for the UI) and follows a dark‑mode design.
+
+## Why this app?
+- **Drag‑able window** – Users can move the app by dragging the top bar or the sidebar, thanks to a custom `-webkit-app-region: drag` implementation.
+- **Consistent spacing** – The UI layout (sidebar, list, detail panel) has been tuned so that elements are not cramped, even when the detail view is empty.
+- **Rich license details** – Owner, website, license key, attached file, purchase/expiry dates, price, and Brew cask command are displayed in a compact, readable panel.
+- **Tag autocomplete & keyboard navigation** – Fast search with arrow‑key navigation and instant selection.
+- **Import / Export** – JSON‑based backup/restore for easy migration.
+- **Dark theme** – Unified dark appearance across the Electron window and the React UI.
+
+## Features
+- Window dragging via top bar and sidebar
+- Dark‑mode UI with custom title‑bar styling
+- License list with search, tag filtering, and category navigation
+- Detail panel with all license metadata and actions (edit, delete, execute Brew command)
+- Tag autocomplete with keyboard support (↑/↓/Enter/Escape)
+- Import / Export JSON data
+- Responsive layout with optimized spacing for dense information display
 
 ![keyvaul_scrrenshot](https://github.com/user-attachments/assets/63a7df48-b5f0-41bd-a6c7-72451e49f92f)
 
 
 ## Getting Started
-
-First, run the development server:
-
 ```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
+# Clone the repository
+git clone https://github.com/hjm79/keyvault.git
+cd keyvault
+
+# Install dependencies
+npm install
+
+# Run the UI in development mode
+npm run dev   # Next.js dev server
+npm start      # Launch Electron (macOS)
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+## Build for Production
+```bash
+npm run dist   # Generates a DMG and zip in the ./dist folder
+```
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+## Contributing
+Feel free to open issues or submit pull requests. Please run `npm run lint` before committing and follow the existing code style.
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
-
-## Learn More
-
-To learn more about Next.js, take a look at the following resources:
-
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
-
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
-
-## Deploy on Vercel
-
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+---
+*Generated with Antigravity – your AI coding assistant.*

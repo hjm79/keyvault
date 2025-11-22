@@ -18,4 +18,28 @@ export interface License {
   brewCaskCommand?: string; // Brew cask 설치 명령어
 }
 
+export interface ElectronAPI {
+  loadLicenses: () => Promise<License[]>;
+  saveLicenses: (licenses: License[]) => Promise<{ success: boolean; error?: string }>;
+  loadCategories: () => Promise<string[]>;
+  saveCategories: (categories: string[]) => Promise<{ success: boolean; error?: string }>;
+  openPath: (path: string) => Promise<{ success: boolean; error?: string }>;
+  showItemInFolder: (path: string) => Promise<{ success: boolean; error?: string }>;
+  openExternal: (url: string) => Promise<{ success: boolean; error?: string }>;
+  copyFile: (sourcePath: string) => Promise<{ success: boolean; path?: string; error?: string }>;
+  getFilePath: (file: File) => string;
+  getAppInfo: (appPath: string) => Promise<{ success: boolean; data?: any; error?: string }>;
+  getStorageLocation: () => Promise<{ currentPath: string; useICloud: boolean; iCloudAvailable: boolean }>;
+  setStorageLocation: (useICloud: boolean) => Promise<{ success: boolean; path?: string; error?: string }>;
+  exportLicensesJSON: () => Promise<{ success: boolean; path?: string; count?: number; error?: string; canceled?: boolean }>;
+  exportLicensesZIP: () => Promise<{ success: boolean; path?: string; count?: number; error?: string; canceled?: boolean }>;
+  exportLicensesExcel: () => Promise<{ success: boolean; path?: string; count?: number; error?: string; canceled?: boolean }>;
+  importLicenses: () => Promise<{ success: boolean; imported?: number; skipped?: number; total?: number; error?: string; canceled?: boolean }>;
+  executeTerminalCommand: (command: string) => Promise<{ success: boolean; error?: string }>;
+}
 
+declare global {
+  interface Window {
+    electronAPI: ElectronAPI;
+  }
+}

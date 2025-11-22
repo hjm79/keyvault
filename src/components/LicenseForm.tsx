@@ -11,19 +11,36 @@ import { useLanguage } from "./LanguageProvider";
 
 interface LicenseFormProps {
     initialData?: License;
+    licenseId?: string;
     isEdit?: boolean;
     onSuccess?: () => void;
     onCancel?: () => void;
 }
 
-export function LicenseForm({ initialData, isEdit = false, onSuccess, onCancel }: LicenseFormProps) {
+export function LicenseForm({ initialData, licenseId, isEdit = false, onSuccess, onCancel }: LicenseFormProps) {
     const router = useRouter();
-    const { addLicense, updateLicense, categories, getAllTags } = useLicenses();
+    const { addLicense, updateLicense, categories, getAllTags, licenses } = useLicenses();
     const { t } = useLanguage();
+
+    // Find license if ID is provided
+    const licenseToEdit = licenseId ? (licenses || []).find(l => l.id === licenseId) : initialData;
+    const effectiveIsEdit = isEdit || !!licenseId;
+
     const [formData, setFormData] = useState<Partial<License>>({
         category: 'Other',
-        ...initialData,
+        ...licenseToEdit,
     });
+
+    // Update form data when licenseId changes
+    useEffect(() => {
+        if (licenseId) {
+            const found = licenses.find(l => l.id === licenseId);
+            if (found) {
+                setFormData({ ...found });
+                setTagsInput(found.tags?.join(", ") || "");
+            }
+        }
+    }, [licenseId, licenses]);
     const [tagsInput, setTagsInput] = useState(initialData?.tags?.join(", ") || "");
     const [isLoading, setIsLoading] = useState(false);
     const [imageError, setImageError] = useState(false);
@@ -203,21 +220,13 @@ export function LicenseForm({ initialData, isEdit = false, onSuccess, onCancel }
             <div className="absolute inset-0 pointer-events-none border-2 border-dashed border-transparent group-hover:border-indigo-500 transition-colors rounded-lg" />
             <div className="space-y-8 divide-y divide-slate-200 dark:divide-slate-700">
                 <div>
-                    <div className="flex items-center justify-between">
+                    <div
+                        className="mb-4"
+                        style={{ WebkitAppRegion: 'drag' } as React.CSSProperties}
+                    >
                         <h3 className="text-lg font-medium leading-6 text-slate-900 dark:text-white">
                             {isEdit ? t('editLicense') : t('newLicense')}
                         </h3>
-                        <button
-                            type="button"
-                            onClick={() => {
-                                if (onCancel) onCancel();
-                                else router.back();
-                            }}
-                            className="rounded-md bg-white dark:bg-slate-800 text-slate-400 hover:text-slate-500 dark:hover:text-slate-300 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2"
-                        >
-                            <span className="sr-only">Close</span>
-                            <X className="h-6 w-6" aria-hidden="true" />
-                        </button>
                     </div>
                     <p className="mt-1 text-sm text-slate-500 dark:text-slate-400">
                         {t('licenseInfoDesc')}
@@ -515,8 +524,8 @@ export function LicenseForm({ initialData, isEdit = false, onSuccess, onCancel }
                                                 type="button"
                                                 onClick={() => handleTagSuggestionClick(tag)}
                                                 className={`w-full text-left px-3 py-2 text-slate-900 dark:text-white text-sm transition-colors ${index === selectedSuggestionIndex
-                                                        ? 'bg-indigo-100 dark:bg-indigo-900'
-                                                        : 'hover:bg-slate-100 dark:hover:bg-slate-600'
+                                                    ? 'bg-indigo-100 dark:bg-indigo-900'
+                                                    : 'hover:bg-slate-100 dark:hover:bg-slate-600'
                                                     }`}
                                             >
                                                 {tag}

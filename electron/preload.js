@@ -12,6 +12,7 @@ contextBridge.exposeInMainWorld('electronAPI', {
     // Export/Import APIs
     exportLicensesJSON: () => ipcRenderer.invoke('export-licenses-json'),
     exportLicensesZIP: () => ipcRenderer.invoke('export-licenses-zip'),
+    exportLicensesExcel: () => ipcRenderer.invoke('export-licenses-excel'),
     importLicenses: () => ipcRenderer.invoke('import-licenses'),
 
     // Storage Location APIs

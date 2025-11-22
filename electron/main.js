@@ -70,7 +70,7 @@ async function createWindow() {
     mainWindow.loadURL(startUrl);
 
     if (process.env.ELECTRON_START_URL) {
-        // mainWindow.webContents.openDevTools();
+        // Development mode
     }
 
     mainWindow.on('closed', function () {
@@ -78,7 +78,7 @@ async function createWindow() {
     });
 }
 
-// app.on('ready', createWindow); // Replaced by app.whenReady() with protocol registration
+
 
 app.on('window-all-closed', function () {
     if (process.platform !== 'darwin') {
@@ -99,12 +99,11 @@ const DATA_PATH = path.join(BASE_DIR, DATA_FILE_NAME);
 const OLD_DATA_PATH = path.join(app.getPath('documents'), DATA_FILE_NAME);
 
 // Migrate old data location to new location if needed
+// Migrate old data location to new location if needed
 function migrateOldData() {
     try {
         // If old data exists and new data doesn't, migrate it
         if (fs.existsSync(OLD_DATA_PATH) && !fs.existsSync(DATA_PATH)) {
-            console.log('Migrating data from old location to new location...');
-
             // Ensure new directory exists
             if (!fs.existsSync(BASE_DIR)) {
                 fs.mkdirSync(BASE_DIR, { recursive: true });
@@ -112,10 +111,6 @@ function migrateOldData() {
 
             // Copy data file
             fs.copyFileSync(OLD_DATA_PATH, DATA_PATH);
-            console.log('Data migration completed');
-
-            // Optionally delete old file (commented out for safety)
-            // fs.unlinkSync(OLD_DATA_PATH);
         }
     } catch (error) {
         console.error('Migration failed:', error);
@@ -277,7 +272,7 @@ ipcMain.handle('copy-file', async (event, sourcePath) => {
 
 const plist = require('plist');
 
-// Protocol registration removed as we are switching back to Base64
+
 app.whenReady().then(() => {
     createWindow();
 });
@@ -285,82 +280,91 @@ app.whenReady().then(() => {
 // ... (rest of the code)
 
 ipcMain.handle('get-app-info', async (event, appPath) => {
-
     try {
+        let name = path.basename(appPath, '.app');
+        let version = '';
+        let category = 'Other';
+        let icon = '';
+        let info = null;
+
+        // Strategy 1: Try reading Info.plist
         const infoPlistPath = path.join(appPath, 'Contents', 'Info.plist');
-        if (!fs.existsSync(infoPlistPath)) {
-            throw new Error('Info.plist not found');
+        if (fs.existsSync(infoPlistPath)) {
+            try {
+                const plistContent = fs.readFileSync(infoPlistPath, 'utf-8');
+                if (plistContent.trim().startsWith('bplist')) {
+                    throw new Error('Binary plist detected');
+                }
+                info = plist.parse(plistContent);
+            } catch (e) {
+                // Try using plutil to convert binary plist to XML
+                try {
+                    const { execSync } = require('child_process');
+                    const xmlContent = execSync(`plutil -convert xml1 -o - "${infoPlistPath}"`).toString();
+                    info = plist.parse(xmlContent);
+                } catch (plutilError) {
+                    console.error('Failed to parse plist with plutil:', plutilError);
+                }
+            }
         }
 
-        let info;
-        try {
-            const plistContent = fs.readFileSync(infoPlistPath, 'utf-8');
-            if (plistContent.trim().startsWith('bplist')) {
-                throw new Error('Binary plist detected');
-            }
-            info = plist.parse(plistContent);
-        } catch (e) {
-            log(`[DEBUG] Standard plist parse failed or binary detected: ${e.message}`);
-            // Try using plutil to convert binary plist to XML
+        if (info) {
+            name = info.CFBundleDisplayName || info.CFBundleName || name;
+            version = info.CFBundleShortVersionString || info.CFBundleVersion || '';
+            const categoryRaw = info.LSApplicationCategoryType || '';
+
+            // Map macOS category
+            const catLower = (categoryRaw || '').toLowerCase();
+            if (catLower.includes('developer') || catLower.includes('development')) category = 'Development';
+            else if (catLower.includes('graphics') || catLower.includes('design') || catLower.includes('photo') || catLower.includes('image')) category = 'Design';
+            else if (catLower.includes('productivity') || catLower.includes('task') || catLower.includes('mind')) category = 'Productivity';
+            else if (catLower.includes('office') || catLower.includes('word') || catLower.includes('excel') || catLower.includes('presentation')) category = 'Office';
+            else if (catLower.includes('utilities') || catLower.includes('utility') || catLower.includes('system') || catLower.includes('tool')) category = 'Utility';
+            else if (catLower.includes('social') || catLower.includes('chat') || catLower.includes('communication')) category = 'Social';
+            else if (catLower.includes('entertainment') || catLower.includes('media')) category = 'Entertainment';
+            else if (catLower.includes('education') || catLower.includes('learn') || catLower.includes('reference')) category = 'Education';
+            else if (catLower.includes('finance') || catLower.includes('money')) category = 'Finance';
+            else if (catLower.includes('game')) category = 'Game';
+            else if (catLower.includes('music') || catLower.includes('audio')) category = 'Music';
+            else if (catLower.includes('video') || catLower.includes('movie')) category = 'Video';
+        }
+
+        // Strategy 2: Use mdls as fallback if info is missing
+        if (!version || name === path.basename(appPath, '.app')) {
             try {
                 const { execSync } = require('child_process');
-                const xmlContent = execSync(`plutil -convert xml1 -o - "${infoPlistPath}"`).toString();
-                info = plist.parse(xmlContent);
-                log('[DEBUG] Successfully parsed binary plist using plutil');
-            } catch (plutilError) {
-                console.error('Failed to parse plist with plutil:', plutilError);
-                throw new Error('Failed to parse Info.plist');
+                // Get display name and version using mdls
+                const mdlsOutput = execSync(`mdls -name kMDItemDisplayName -name kMDItemVersion -name kMDItemKind "${appPath}"`).toString();
+
+                const nameMatch = mdlsOutput.match(/kMDItemDisplayName\s*=\s*"([^"]+)"/);
+                const versionMatch = mdlsOutput.match(/kMDItemVersion\s*=\s*"([^"]+)"/);
+
+                if (nameMatch && nameMatch[1]) name = nameMatch[1];
+                if (versionMatch && versionMatch[1]) version = versionMatch[1];
+            } catch (e) {
+                console.error('mdls fallback failed:', e);
             }
         }
 
-        let name = info.CFBundleDisplayName || info.CFBundleName || path.basename(appPath, '.app');
-        const version = info.CFBundleShortVersionString || info.CFBundleVersion;
-        const categoryRaw = info.LSApplicationCategoryType || '';
-
-        // Map macOS category to our Category type
-        let category = 'Other';
-        const catLower = (categoryRaw || '').toLowerCase();
-
-        if (catLower.includes('developer') || catLower.includes('development')) category = 'Development';
-        else if (catLower.includes('graphics') || catLower.includes('design') || catLower.includes('photo') || catLower.includes('image')) category = 'Design';
-        else if (catLower.includes('productivity') || catLower.includes('task') || catLower.includes('mind')) category = 'Productivity';
-        else if (catLower.includes('office') || catLower.includes('word') || catLower.includes('excel') || catLower.includes('presentation')) category = 'Office';
-        else if (catLower.includes('utilities') || catLower.includes('utility') || catLower.includes('system') || catLower.includes('tool')) category = 'Utility';
-        else if (catLower.includes('social') || catLower.includes('chat') || catLower.includes('communication')) category = 'Social';
-        else if (catLower.includes('entertainment') || catLower.includes('media')) category = 'Entertainment';
-        else if (catLower.includes('education') || catLower.includes('learn') || catLower.includes('reference')) category = 'Education';
-        else if (catLower.includes('finance') || catLower.includes('money')) category = 'Finance';
-        else if (catLower.includes('game')) category = 'Game';
-        else if (catLower.includes('music') || catLower.includes('audio')) category = 'Music';
-        else if (catLower.includes('video') || catLower.includes('movie')) category = 'Video';
-
         // Get Icon
-        let icon = '';
-
         // Try to find icon file from already parsed info
-        let iconFileName = info.CFBundleIconFile || info.CFBundleIconName;
+        let iconFileName = info ? (info.CFBundleIconFile || info.CFBundleIconName) : '';
 
         if (iconFileName) {
-            // Remove .icns extension if present (macOS adds it automatically)
+            // Remove .icns extension if present
             iconFileName = iconFileName.replace(/\.icns$/, '');
             const iconPath = path.join(appPath, 'Contents', 'Resources', `${iconFileName}.icns`);
 
             if (fs.existsSync(iconPath)) {
                 try {
-                    // Convert .icns to PNG using sips (macOS built-in tool)
                     const tmpPngPath = path.join(os.tmpdir(), `icon-${Date.now()}.png`);
                     await execPromise(`sips -s format png "${iconPath}" --out "${tmpPngPath}" --resampleWidth 256`);
-
                     const image = nativeImage.createFromPath(tmpPngPath);
                     if (!image.isEmpty()) {
                         icon = image.toDataURL();
                     }
-
-                    // Clean up temp file
                     fs.unlinkSync(tmpPngPath);
-                } catch (e) {
-                    // Silently fail
-                }
+                } catch (e) { }
             }
         }
 
@@ -373,24 +377,17 @@ ipcMain.handle('get-app-info', async (event, appPath) => {
                 if (icnsFile) {
                     const altPath = path.join(resourcesPath, icnsFile);
                     try {
-                        // Convert .icns to PNG using sips
                         const tmpPngPath = path.join(os.tmpdir(), `icon-${Date.now()}.png`);
                         await execPromise(`sips -s format png "${altPath}" --out "${tmpPngPath}" --resampleWidth 256`);
-
                         const image = nativeImage.createFromPath(tmpPngPath);
                         if (!image.isEmpty()) {
                             icon = image.toDataURL();
                         }
-
-                        // Clean up temp file
                         fs.unlinkSync(tmpPngPath);
-                    } catch (e) {
-                        // Silently fail
-                    }
+                    } catch (e) { }
                 }
             }
         }
-
 
         return {
             success: true,
@@ -587,6 +584,75 @@ ipcMain.handle('export-licenses-zip', async () => {
         });
     } catch (error) {
         console.error('Export ZIP failed:', error);
+        return { success: false, error: error.message };
+    }
+});
+
+// Export licenses as Excel
+ipcMain.handle('export-licenses-excel', async () => {
+    try {
+        const result = await dialog.showSaveDialog({
+            title: 'Export Licenses as Excel',
+            defaultPath: `licenses-export-${new Date().toISOString().split('T')[0]}.xlsx`,
+            filters: [{ name: 'Excel Workbook', extensions: ['xlsx'] }]
+        });
+
+        if (result.canceled) {
+            return { success: false, canceled: true };
+        }
+
+        const basePath = getStorageBasePath();
+        const dataPath = path.join(basePath, 'license-manager-data.json');
+
+        if (!fs.existsSync(dataPath)) {
+            return { success: false, error: 'No licenses found to export' };
+        }
+
+        const licenses = JSON.parse(fs.readFileSync(dataPath, 'utf-8'));
+
+        // Convert to flat structure for Excel
+        const excelData = licenses.map(l => ({
+            Name: l.name,
+            Category: l.category,
+            Version: l.version || '',
+            URL: l.url || '',
+            'License Key': l.licenseKey || '',
+            'Purchase Date': l.purchaseDate || '',
+            'Expiry Date': l.expiryDate || '',
+            Price: l.price || '',
+            Owner: l.owner || '',
+            Notes: l.memo || '',
+            'Brew Command': l.brewCaskCommand || '',
+            Tags: l.tags ? l.tags.join(', ') : ''
+        }));
+
+        const xlsx = require('xlsx');
+        const workbook = xlsx.utils.book_new();
+        const worksheet = xlsx.utils.json_to_sheet(excelData);
+
+        // Auto-adjust column widths (approximate)
+        const colWidths = [
+            { wch: 20 }, // Name
+            { wch: 15 }, // Category
+            { wch: 10 }, // Version
+            { wch: 30 }, // URL
+            { wch: 25 }, // License Key
+            { wch: 12 }, // Purchase Date
+            { wch: 12 }, // Expiry Date
+            { wch: 10 }, // Price
+            { wch: 15 }, // Owner
+            { wch: 30 }, // Notes
+            { wch: 25 }, // Brew Command
+            { wch: 20 }  // Tags
+        ];
+        worksheet['!cols'] = colWidths;
+
+        xlsx.utils.book_append_sheet(workbook, worksheet, 'Licenses');
+        xlsx.writeFile(workbook, result.filePath);
+
+        return { success: true, path: result.filePath, count: licenses.length };
+    } catch (error) {
+        console.error('Export Excel failed:', error);
         return { success: false, error: error.message };
     }
 });

@@ -6,7 +6,6 @@ import {
     FileText,
     FolderOpen,
     Globe,
-    Key,
     Tag,
     User,
     Edit,
@@ -15,9 +14,11 @@ import {
     Terminal
 } from "lucide-react";
 
+import { useLicenses } from "@/hooks/useLicenses";
+
 interface LicenseDetailPanelProps {
-    license: License | null;
-    onEdit: (license: License) => void;
+    licenseId?: string;
+    onEdit: (id: string) => void;
     onDelete: (id: string) => void;
     onClose?: () => void;
 }
@@ -26,7 +27,9 @@ import { useLanguage } from "./LanguageProvider";
 import { useState } from "react";
 
 // ... inside component
-export function LicenseDetailPanel({ license, onEdit, onDelete, onClose }: LicenseDetailPanelProps) {
+export function LicenseDetailPanel({ licenseId, onEdit, onDelete, onClose }: LicenseDetailPanelProps) {
+    const { licenses } = useLicenses();
+    const license = licenseId ? (licenses || []).find(l => l.id === licenseId) || null : null;
     const { t } = useLanguage();
     const [isExecuting, setIsExecuting] = useState(false);
 
@@ -115,7 +118,7 @@ export function LicenseDetailPanel({ license, onEdit, onDelete, onClose }: Licen
                         style={{ WebkitAppRegion: 'no-drag' } as React.CSSProperties}
                     >
                         <button
-                            onClick={() => onEdit(license)}
+                            onClick={() => onEdit(license.id)}
                             className="inline-flex items-center px-4 py-2 border border-slate-300 dark:border-slate-600 shadow-sm text-sm font-medium rounded-md text-slate-700 dark:text-slate-200 bg-white dark:bg-slate-700 hover:bg-slate-50 dark:hover:bg-slate-600 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 whitespace-nowrap flex-shrink-0"
                         >
                             <Edit className="h-4 w-4 mr-2 flex-shrink-0" />
