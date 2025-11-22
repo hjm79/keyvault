@@ -49,6 +49,7 @@ Built with **Electron** and **Next.js**, it features a unified dark-mode interfa
 - Responsive layout for dense information
 
 ## Screenshot
+![keyvault-3pan](https://github.com/user-attachments/assets/1a90039c-0601-44e8-8616-a3c8feb3af3e)
 
 ![keyvault-main](https://github.com/user-attachments/assets/d1465818-4907-409c-8b21-e6b6f85efcc5)
 
@@ -95,6 +96,7 @@ KeyVault – 라이선스 관리 데스크톱 앱
 - **풍부한 라이선스 정보 관리**
 소유자, 웹사이트, 라이선스 키, 첨부파일, 구매/만료일, 가격, Brew cask 명령어까지 정돈된 패널 제공.
 
+
 - **태그 자동완성 + 키보드 네비게이션**
 ↑/↓/Enter/Escape를 이용한 빠른 태그 탐색.
 
@@ -120,6 +122,7 @@ Electron 윈도우와 React UI를 통일된 스타일로 구성.
 밀도 높은 정보 표시를 위한 최적화된 레이아웃
 
 ## 스크린샷
+![keyvault-3pan](https://github.com/user-attachments/assets/1a90039c-0601-44e8-8616-a3c8feb3af3e)
 
 ![keyvault-main](https://github.com/user-attachments/assets/d1465818-4907-409c-8b21-e6b6f85efcc5)
 
