@@ -17,6 +17,9 @@ Built with **Electron** and **Next.js**, it features a unified dark-mode interfa
 - **Automatic license metadata extraction**  
   Dragging an application file into KeyVault automatically detects and fills in the app name, version, icon, and category.
 
+![keyvault-drag](https://github.com/user-attachments/assets/fb3d2f0a-28be-48c6-a940-4c21e880a9d0)
+
+
 - **Consistent spacing**  
   Layout maintains balanced spacing even when the detail panel is empty.
 
@@ -82,6 +85,8 @@ KeyVault – 라이선스 관리 데스크톱 앱
 
 - **앱 드래그 시 자동 정보 추출**
 앱 파일을 KeyVault로 드래그하면 앱 이름, 버전, 아이콘, 카테고리가 자동으로 채워집니다.
+
+![keyvault-drag](https://github.com/user-attachments/assets/fb3d2f0a-28be-48c6-a940-4c21e880a9d0)
 
 - **균형 잡힌 UI 간격**
 상세 패널이 비어 있어도 UI가 답답하지 않도록 설계되었습니다.
