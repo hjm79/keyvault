@@ -50,7 +50,8 @@ Built with **Electron** and **Next.js**, it features a unified dark-mode interfa
 
 ## Screenshot
 
-![keyvaul_scrrenshot](https://github.com/user-attachments/assets/63a7df48-b5f0-41bd-a6c7-72451e49f92f)
+![keyvault-main](https://github.com/user-attachments/assets/d1465818-4907-409c-8b21-e6b6f85efcc5)
+
 
 
 ## Getting Started
@@ -117,6 +118,10 @@ Electron 윈도우와 React UI를 통일된 스타일로 구성.
 - Excel 내보내기
 
 밀도 높은 정보 표시를 위한 최적화된 레이아웃
+
+## 스크린샷
+
+![keyvault-main](https://github.com/user-attachments/assets/d1465818-4907-409c-8b21-e6b6f85efcc5)
 
 ## 시작하기
 
