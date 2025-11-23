@@ -35,7 +35,7 @@ export function SettingsPanel() {
             }
 
             const latestVersion = result.data.tagName.replace('v', '');
-            const currentVersion = '1.3.0';
+            const currentVersion = '1.3.2';
 
             console.log('Latest version:', latestVersion);
             console.log('Current version:', currentVersion);
@@ -296,7 +296,7 @@ export function SettingsPanel() {
 
                                 <div className="flex justify-between items-center py-2 border-b border-slate-200 dark:border-slate-700">
                                     <span className="text-slate-600 dark:text-slate-400">{t('version')}</span>
-                                    <span className="font-semibold text-slate-900 dark:text-white">1.3.0</span>
+                                    <span className="font-semibold text-slate-900 dark:text-white">1.3.2</span>
                                 </div>
 
                                 <div className="flex justify-between items-center py-2 border-b border-slate-200 dark:border-slate-700">
