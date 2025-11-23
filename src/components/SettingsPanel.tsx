@@ -21,24 +21,17 @@ export function SettingsPanel() {
     const checkForUpdates = async () => {
         setIsCheckingUpdate(true);
         try {
-            console.log('Checking for updates from GitHub API...');
-
             if (!window.electronAPI) {
                 throw new Error('Electron API not available');
             }
 
             const result = await window.electronAPI.checkForUpdates();
-            console.log('Update check result:', result);
-
             if (!result.success || !result.data) {
                 throw new Error(result.error || 'Failed to fetch update information');
             }
 
             const latestVersion = result.data.tagName.replace('v', '');
             const currentVersion = '1.3.2';
-
-            console.log('Latest version:', latestVersion);
-            console.log('Current version:', currentVersion);
 
             if (latestVersion > currentVersion) {
                 if (confirm(`${t('newVersionAvailable')}: ${latestVersion}\n${t('downloadNow')}`)) {

@@ -62,16 +62,12 @@ async function createWindow() {
             preload: path.join(__dirname, 'preload.js'),
             nodeIntegration: false,
             contextIsolation: true,
-            webSecurity: false // DEBUG: Disable webSecurity to allow local resources
+            contextIsolation: true
         },
     });
 
     const startUrl = process.env.ELECTRON_START_URL || `file://${path.join(__dirname, '../out/index.html')}`;
     mainWindow.loadURL(startUrl);
-
-    if (process.env.ELECTRON_START_URL) {
-        // Development mode
-    }
 
     mainWindow.on('closed', function () {
         mainWindow = null;
@@ -507,7 +503,7 @@ ipcMain.handle('get-storage-location', async () => {
             iCloudAvailable = true;
         }
     } catch (e) {
-        console.log('iCloud check failed:', e);
+        // iCloud check failed
     }
 
     // Determine current path
@@ -547,7 +543,6 @@ ipcMain.handle('set-storage-location', async (event, useICloud) => {
         if (!fs.existsSync(newBasePath)) {
             try {
                 fs.mkdirSync(newBasePath, { recursive: true });
-                console.log('Created storage directory:', newBasePath);
             } catch (err) {
                 console.error('Failed to create storage directory:', err);
                 // If iCloud creation fails, it might be permissions, but we return the path anyway
