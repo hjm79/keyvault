@@ -169,7 +169,17 @@ export function Sidebar({ currentView, onNavigate, selectedCategory, onSelectCat
                         )}
                     >
                         <Key className="mr-3 h-5 w-5 transition-transform duration-200 group-hover:scale-[1.15]" />
-                        {t('allKeys')}
+                        <span className="flex-1">{t('allKeys')}</span>
+                        {licenses.length > 0 && (
+                            <span className={cn(
+                                "ml-auto py-0.5 px-2 rounded-full text-xs font-medium",
+                                selectedCategory === null
+                                    ? "bg-stone-300 dark:bg-zinc-700 text-stone-900 dark:text-white"
+                                    : "bg-stone-200 dark:bg-zinc-800 group-hover:bg-stone-300 dark:group-hover:bg-zinc-700 text-stone-900 dark:text-white"
+                            )}>
+                                {licenses.length}
+                            </span>
+                        )}
                     </button>
                 </div>
 

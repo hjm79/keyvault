@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from "react";
 import { useLanguage } from "./LanguageProvider";
-import { Lock, ArrowRight, Globe } from "lucide-react";
+import { Lock, ArrowRight, Globe, Fingerprint } from "lucide-react";
 
 interface LoginScreenProps {
     onAuthenticated: () => void;
@@ -20,6 +20,19 @@ export function LoginScreen({ onAuthenticated }: LoginScreenProps) {
         const storedHash = localStorage.getItem("app_password_hash");
         if (!storedHash) {
             setIsSetupMode(true);
+        } else {
+            // Auto-prompt for Touch ID if password exists
+            const promptTouchID = async () => {
+                try {
+                    const result = await window.electronAPI.promptTouchID("Unlock KeyVault");
+                    if (result.success) {
+                        onAuthenticated();
+                    }
+                } catch (e) {
+                    console.error(e);
+                }
+            };
+            promptTouchID();
         }
     }, []);
 
@@ -158,6 +171,26 @@ export function LoginScreen({ onAuthenticated }: LoginScreenProps) {
                             {isSetupMode ? t('createPassword') : t('unlock')}
                             <ArrowRight className="ml-2 h-4 w-4 group-hover:translate-x-1 transition-transform" />
                         </button>
+
+                        {!isSetupMode && (
+                            <button
+                                type="button"
+                                onClick={async () => {
+                                    try {
+                                        const result = await window.electronAPI.promptTouchID("Unlock KeyVault");
+                                        if (result.success) {
+                                            onAuthenticated();
+                                        }
+                                    } catch (e) {
+                                        console.error(e);
+                                    }
+                                }}
+                                className="mt-4 w-full flex justify-center items-center py-2 px-4 border border-slate-300 dark:border-slate-600 rounded-lg text-sm font-medium text-slate-700 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-700 transition-colors"
+                            >
+                                <Fingerprint className="mr-2 h-5 w-5" />
+                                Use Touch ID
+                            </button>
+                        )}
                     </form>
                 </div>
             </div>

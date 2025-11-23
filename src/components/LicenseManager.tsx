@@ -71,6 +71,45 @@ export function LicenseManager() {
         };
     }, [isAuthenticated]);
 
+    // Check for expiring licenses
+    useEffect(() => {
+        if (!isAuthenticated || !licenses) return;
+
+        const checkExpiry = () => {
+            const now = new Date();
+            const warningDate = new Date();
+            warningDate.setDate(now.getDate() + 7); // 7 days warning
+
+            licenses.forEach(license => {
+                if (license.expiryDate) {
+                    const expiry = new Date(license.expiryDate);
+                    if (isNaN(expiry.getTime())) return;
+
+                    // Check if expiring within 7 days and is in the future
+                    if (expiry > now && expiry <= warningDate) {
+                        const notificationKey = `notified-${license.id}-${expiry.toISOString().split('T')[0]}`;
+                        if (!sessionStorage.getItem(notificationKey)) {
+                            new Notification(t('licenseExpiringSoon'), {
+                                body: `${license.name} - ${license.expiryDate}`,
+                            });
+                            sessionStorage.setItem(notificationKey, 'true');
+                        }
+                    }
+                }
+            });
+        };
+
+        if (Notification.permission !== 'granted') {
+            Notification.requestPermission().then(permission => {
+                if (permission === 'granted') {
+                    checkExpiry();
+                }
+            });
+        } else {
+            checkExpiry();
+        }
+    }, [isAuthenticated, licenses, t]);
+
     // Filter licenses based on category and search query
     const filteredLicenses = useMemo(() => {
         let result = licenses || [];

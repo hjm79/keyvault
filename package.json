@@ -26,7 +26,6 @@
     ],
     "mac": {
       "target": [
-        "dmg",
         "zip"
       ],
       "hardenedRuntime": true,

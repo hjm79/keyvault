@@ -24,6 +24,7 @@ export const translations = {
         commandExecuted: "명령어가 실행되었습니다.",
         commandFailed: "명령어 실행에 실패했습니다.",
         enterBrewCommand: "예: brew install --cask visual-studio-code",
+        licenseExpiringSoon: "라이센스 만료 예정",
 
         // Settings
         settingsTitle: "설정",
@@ -178,6 +179,7 @@ export const translations = {
         commandExecuted: "Command executed.",
         commandFailed: "Failed to execute command.",
         enterBrewCommand: "e.g., brew install --cask visual-studio-code",
+        licenseExpiringSoon: "License Expiring Soon",
 
         // Settings
         settingsTitle: "Settings",

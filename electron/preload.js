@@ -31,4 +31,5 @@ contextBridge.exposeInMainWorld('electronAPI', {
 
     // Execute terminal command
     executeTerminalCommand: (command) => ipcRenderer.invoke('execute-terminal-command', command),
+    promptTouchID: (reason) => ipcRenderer.invoke('prompt-touch-id', reason),
 });

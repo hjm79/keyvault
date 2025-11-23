@@ -1,4 +1,4 @@
-const { app, BrowserWindow, ipcMain, protocol, net, nativeImage, shell, dialog } = require('electron');
+const { app, BrowserWindow, ipcMain, protocol, net, nativeImage, shell, dialog, systemPreferences } = require('electron');
 const path = require('path');
 const fs = require('fs');
 const os = require('os');
@@ -317,6 +317,21 @@ ipcMain.handle('copy-file', async (event, sourcePath) => {
 
 const plist = require('plist');
 
+
+// Touch ID Handler
+ipcMain.handle('prompt-touch-id', async (event, reason) => {
+    try {
+        if (process.platform === 'darwin') {
+            await systemPreferences.promptTouchID(reason);
+            return { success: true };
+        } else {
+            return { success: false, error: 'Touch ID is only available on macOS' };
+        }
+    } catch (error) {
+        console.error('Touch ID failed:', error);
+        return { success: false, error: error.message };
+    }
+});
 
 app.whenReady().then(() => {
     createWindow();

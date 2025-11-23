@@ -41,6 +41,7 @@ export interface ElectronAPI {
   importLicenses: () => Promise<{ success: boolean; imported?: number; skipped?: number; total?: number; error?: string; canceled?: boolean }>;
   executeTerminalCommand: (command: string) => Promise<{ success: boolean; error?: string }>;
   checkForUpdates: () => Promise<{ success: boolean; data?: { tagName: string; htmlUrl: string; name: string }; error?: string }>;
+  promptTouchID: (reason: string) => Promise<{ success: boolean; error?: string }>;
 }
 
 declare global {
