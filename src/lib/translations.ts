@@ -51,6 +51,12 @@ export const translations = {
         languageDesc: "애플리케이션 언어를 선택하세요.",
         korean: "한국어",
         english: "English",
+        checkForUpdates: "업데이트 확인",
+        checking: "확인 중...",
+        newVersionAvailable: "새 버전이 출시되었습니다",
+        downloadNow: "다운로드 페이지로 이동하시겠습니까?",
+        upToDate: "최신 버전을 사용 중입니다!",
+        updateCheckFailed: "업데이트 확인에 실패했습니다",
 
         // License List
         searchPlaceholder: "이름, 태그, 소유자 검색...",
@@ -189,6 +195,12 @@ export const translations = {
         languageDesc: "Select application language.",
         korean: "한국어",
         english: "English",
+        checkForUpdates: "Check for Updates",
+        checking: "Checking...",
+        newVersionAvailable: "New version available",
+        downloadNow: "Go to download page?",
+        upToDate: "You're on the latest version!",
+        updateCheckFailed: "Failed to check for updates",
 
         // License List
         searchPlaceholder: "Search by name, tag, owner...",

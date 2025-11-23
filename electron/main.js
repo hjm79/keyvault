@@ -244,6 +244,51 @@ ipcMain.handle('open-external', async (event, url) => {
     }
 });
 
+// Check for updates from GitHub
+ipcMain.handle('check-for-updates', async () => {
+    try {
+        const https = require('https');
+
+        return new Promise((resolve, reject) => {
+            const options = {
+                hostname: 'api.github.com',
+                path: '/repos/hjm79/keyvault/releases/latest',
+                headers: {
+                    'User-Agent': 'KeyVault-App'
+                }
+            };
+
+            https.get(options, (res) => {
+                let data = '';
+
+                res.on('data', (chunk) => {
+                    data += chunk;
+                });
+
+                res.on('end', () => {
+                    try {
+                        const release = JSON.parse(data);
+                        resolve({
+                            success: true,
+                            data: {
+                                tagName: release.tag_name,
+                                htmlUrl: release.html_url,
+                                name: release.name
+                            }
+                        });
+                    } catch (error) {
+                        resolve({ success: false, error: 'Failed to parse response' });
+                    }
+                });
+            }).on('error', (error) => {
+                resolve({ success: false, error: error.message });
+            });
+        });
+    } catch (error) {
+        return { success: false, error: error.message };
+    }
+});
+
 ipcMain.handle('copy-file', async (event, sourcePath) => {
     try {
         const basePath = getStorageBasePath();

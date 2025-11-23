@@ -4,14 +4,57 @@ import { useState, useEffect } from "react";
 import { useLicenses } from "@/hooks/useLicenses";
 import { useTheme } from "@/components/ThemeProvider";
 import { useLanguage } from "@/components/LanguageProvider";
-import { Settings, Cloud, HardDrive, Sun, Moon, Monitor, Trash2, Info, ExternalLink, Globe, FolderOpen } from "lucide-react";
+import { Settings, Cloud, HardDrive, Sun, Moon, Monitor, Trash2, Info, ExternalLink, Globe, FolderOpen, Download } from "lucide-react";
 
 export function SettingsPanel() {
     const { licenses } = useLicenses();
     const { theme, setTheme } = useTheme();
     const { language, setLanguage, t } = useLanguage();
-    const [storageInfo, setStorageInfo] = useState<any>(null);
+    const [storageInfo, setStorageInfo] = useState<{
+        currentPath: string;
+        iCloudAvailable: boolean;
+        useICloud: boolean;
+    } | null>(null);
     const [isLoading, setIsLoading] = useState(true);
+    const [isCheckingUpdate, setIsCheckingUpdate] = useState(false);
+
+    const checkForUpdates = async () => {
+        setIsCheckingUpdate(true);
+        try {
+            console.log('Checking for updates from GitHub API...');
+
+            if (!window.electronAPI) {
+                throw new Error('Electron API not available');
+            }
+
+            const result = await window.electronAPI.checkForUpdates();
+            console.log('Update check result:', result);
+
+            if (!result.success || !result.data) {
+                throw new Error(result.error || 'Failed to fetch update information');
+            }
+
+            const latestVersion = result.data.tagName.replace('v', '');
+            const currentVersion = '1.2.0';
+
+            console.log('Latest version:', latestVersion);
+            console.log('Current version:', currentVersion);
+
+            if (latestVersion > currentVersion) {
+                if (confirm(`${t('newVersionAvailable')}: ${latestVersion}\n${t('downloadNow')}`)) {
+                    window.electronAPI.openExternal(result.data.htmlUrl);
+                }
+            } else {
+                alert(t('upToDate'));
+            }
+        } catch (error) {
+            console.error('Update check failed:', error);
+            const errorMessage = error instanceof Error ? error.message : 'Unknown error';
+            alert(`${t('updateCheckFailed')}\n\n${errorMessage}`);
+        } finally {
+            setIsCheckingUpdate(false);
+        }
+    };
 
     useEffect(() => {
         loadStorageInfo();
@@ -285,6 +328,25 @@ export function SettingsPanel() {
                                     </button>
                                 </div>
                             </div>
+
+                            {/* Update Check Button */}
+                            <button
+                                onClick={checkForUpdates}
+                                disabled={isCheckingUpdate}
+                                className="w-full flex items-center justify-center gap-2 px-4 py-3 mt-4 bg-indigo-600 hover:bg-indigo-700 disabled:bg-gray-400 disabled:cursor-not-allowed text-white rounded-lg transition-colors font-medium shadow-sm"
+                            >
+                                {isCheckingUpdate ? (
+                                    <>
+                                        <span className="animate-spin">⟳</span>
+                                        {t('checking')}
+                                    </>
+                                ) : (
+                                    <>
+                                        <Download className="h-5 w-5" />
+                                        {t('checkForUpdates')}
+                                    </>
+                                )}
+                            </button>
                         </div>
                     </div>
                 </div>

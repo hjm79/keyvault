@@ -26,6 +26,9 @@ contextBridge.exposeInMainWorld('electronAPI', {
     // Open external URL
     openExternal: (url) => ipcRenderer.invoke('open-external', url),
 
+    // Check for updates
+    checkForUpdates: () => ipcRenderer.invoke('check-for-updates'),
+
     // Execute terminal command
     executeTerminalCommand: (command) => ipcRenderer.invoke('execute-terminal-command', command),
 });

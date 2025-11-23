@@ -36,6 +36,7 @@ export interface ElectronAPI {
   exportLicensesExcel: () => Promise<{ success: boolean; path?: string; count?: number; error?: string; canceled?: boolean }>;
   importLicenses: () => Promise<{ success: boolean; imported?: number; skipped?: number; total?: number; error?: string; canceled?: boolean }>;
   executeTerminalCommand: (command: string) => Promise<{ success: boolean; error?: string }>;
+  checkForUpdates: () => Promise<{ success: boolean; data?: { tagName: string; htmlUrl: string; name: string }; error?: string }>;
 }
 
 declare global {
