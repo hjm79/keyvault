@@ -93,18 +93,18 @@ export function LicenseDetailPanel({ licenseId, onEdit, onDelete, onClose }: Lic
                             )}
                         </div>
                         <div>
-                            <h1 className="text-3xl font-bold text-slate-900 dark:text-white">{license.name}</h1>
+                            <h1 className="text-2xl font-bold text-slate-900 dark:text-white">{license.name}</h1>
                             {license.version && (
-                                <p className="mt-1 text-lg text-slate-500 dark:text-slate-400">{t('version')}: {license.version}</p>
+                                <p className="mt-1 text-sm text-slate-500 dark:text-slate-400">{t('version')}: {license.version}</p>
                             )}
                             <div className="mt-4 flex flex-wrap gap-2">
-                                <span className="inline-flex items-center px-3 py-1 rounded-full text-sm font-medium bg-blue-100 dark:bg-blue-900/30 text-blue-800 dark:text-blue-300">
+                                <span className="inline-flex items-center px-3 py-1 rounded-full text-xs font-medium bg-blue-100 dark:bg-blue-900/30 text-blue-800 dark:text-blue-300">
                                     {license.category}
                                 </span>
                                 {license.tags && license.tags.map((tag, index) => (
                                     <span
                                         key={index}
-                                        className="inline-flex items-center px-3 py-1 rounded-full text-sm font-medium bg-green-100 dark:bg-green-900/30 text-green-800 dark:text-green-300"
+                                        className="inline-flex items-center px-3 py-1 rounded-full text-xs font-medium bg-green-100 dark:bg-green-900/30 text-green-800 dark:text-green-300"
                                     >
                                         <Tag className="w-3 h-3 mr-1" />
                                         {tag}
@@ -119,9 +119,9 @@ export function LicenseDetailPanel({ licenseId, onEdit, onDelete, onClose }: Lic
                     >
                         <button
                             onClick={() => onEdit(license.id)}
-                            className="inline-flex items-center px-4 py-2 border border-slate-300 dark:border-slate-600 shadow-sm text-sm font-medium rounded-md text-slate-700 dark:text-slate-200 bg-white dark:bg-slate-700 hover:bg-slate-50 dark:hover:bg-slate-600 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 whitespace-nowrap flex-shrink-0"
+                            className="inline-flex items-center px-2 py-1 border border-slate-300 dark:border-slate-600 shadow-sm text-xs font-medium rounded-md text-slate-700 dark:text-slate-200 bg-white dark:bg-slate-700 hover:bg-slate-50 dark:hover:bg-slate-600 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 whitespace-nowrap flex-shrink-0"
                         >
-                            <Edit className="h-4 w-4 mr-2 flex-shrink-0" />
+                            <Edit className="h-3 w-3 mr-1 flex-shrink-0" />
                             {t('edit')}
                         </button>
                         <button
@@ -130,9 +130,9 @@ export function LicenseDetailPanel({ licenseId, onEdit, onDelete, onClose }: Lic
                                     onDelete(license.id);
                                 }
                             }}
-                            className="inline-flex items-center px-4 py-2 border border-transparent shadow-sm text-sm font-medium rounded-md text-white bg-red-600 hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-500 whitespace-nowrap flex-shrink-0"
+                            className="inline-flex items-center px-2 py-1 border border-transparent shadow-sm text-xs font-medium rounded-md text-white bg-red-600 hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-500 whitespace-nowrap flex-shrink-0"
                         >
-                            <Trash2 className="h-4 w-4 mr-2 flex-shrink-0" />
+                            <Trash2 className="h-3 w-3 mr-1 flex-shrink-0" />
                             {t('delete')}
                         </button>
                         {onClose && (

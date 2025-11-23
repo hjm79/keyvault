@@ -188,7 +188,7 @@ export function LicenseForm({ initialData, licenseId, isEdit = false, onSuccess,
 
                         if (result.success && result.data) {
                             const updates: any = {
-                                name: result.data.name,
+                                name: result.data.name.replace(/\.app$/i, ''),
                                 version: result.data.version,
                                 category: result.data.category,
                             };
@@ -231,14 +231,6 @@ export function LicenseForm({ initialData, licenseId, isEdit = false, onSuccess,
             <div className="absolute inset-0 pointer-events-none border-2 border-dashed border-transparent group-hover:border-indigo-500 transition-colors rounded-lg" />
             <div className="space-y-8 divide-y divide-slate-200 dark:divide-slate-700">
                 <div>
-                    <div
-                        className="mb-4"
-                        style={{ WebkitAppRegion: 'drag' } as React.CSSProperties}
-                    >
-                        <h3 className="text-lg font-medium leading-6 text-slate-900 dark:text-white">
-                            {isEdit ? t('editLicense') : t('newLicense')}
-                        </h3>
-                    </div>
                     <p className="mt-1 text-sm text-slate-500 dark:text-slate-400">
                         {t('licenseInfoDesc')}
                     </p>

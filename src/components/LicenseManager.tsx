@@ -8,19 +8,25 @@ import { LicenseDetailPanel } from "@/components/LicenseDetailPanel";
 import { LicenseForm } from "@/components/LicenseForm";
 import { SettingsPanel } from "@/components/SettingsPanel";
 import { LoginScreen } from "@/components/LoginScreen";
+import { Modal } from "@/components/Modal";
 import { useLicenses } from "@/hooks/useLicenses";
-import { License } from "@/types";
+import { License, SortOption } from "@/types";
+import { useLanguage } from "@/components/LanguageProvider";
 
 type ViewState = 'list' | 'create' | 'edit' | 'settings';
 
 export function LicenseManager() {
     const { licenses, loading, deleteLicense } = useLicenses();
+    const { t } = useLanguage();
     const [view, setView] = useState<ViewState>('list');
     const [selectedCategory, setSelectedCategory] = useState<string | null>(null);
     const [selectedLicenseId, setSelectedLicenseId] = useState<string | null>(null);
     const [editLicenseId, setEditLicenseId] = useState<string | null>(null);
+    const [isSettingsOpen, setIsSettingsOpen] = useState(false);
+    const [isAddLicenseOpen, setIsAddLicenseOpen] = useState(false);
     const [searchQuery, setSearchQuery] = useState("");
     const [isAuthenticated, setIsAuthenticated] = useState(false);
+    const [sortOption, setSortOption] = useState<SortOption>('default');
 
     // Check if password exists (if not, show setup)
     useEffect(() => {
@@ -86,6 +92,37 @@ export function LicenseManager() {
         return result;
     }, [licenses, selectedCategory, searchQuery]);
 
+    // Sort licenses
+    const sortedLicenses = useMemo(() => {
+        const result = [...filteredLicenses];
+
+        switch (sortOption) {
+            case 'name-asc':
+                result.sort((a, b) => a.name.localeCompare(b.name));
+                break;
+            case 'name-desc':
+                result.sort((a, b) => b.name.localeCompare(a.name));
+                break;
+            case 'added-desc':
+                result.sort((a, b) => (b.createdAt || '').localeCompare(a.createdAt || ''));
+                break;
+            case 'added-asc':
+                result.sort((a, b) => (a.createdAt || '').localeCompare(b.createdAt || ''));
+                break;
+            case 'modified-desc':
+                result.sort((a, b) => (b.updatedAt || '').localeCompare(a.updatedAt || ''));
+                break;
+            case 'modified-asc':
+                result.sort((a, b) => (a.updatedAt || '').localeCompare(b.updatedAt || ''));
+                break;
+            case 'default':
+            default:
+                result.sort((a, b) => a.name.localeCompare(b.name));
+                break;
+        }
+        return result;
+    }, [filteredLicenses, sortOption]);
+
     if (!isAuthenticated) {
         return <LoginScreen onAuthenticated={() => setIsAuthenticated(true)} />;
     }
@@ -110,10 +147,20 @@ export function LicenseManager() {
     };
 
     const handleNavigate = (newView: ViewState) => {
-        setView(newView);
+        if (newView === 'settings') {
+            setIsSettingsOpen(true);
+            return;
+        }
         if (newView === 'create') {
-            setSelectedLicenseId(null);
-            setEditLicenseId(null);
+            setIsAddLicenseOpen(true);
+            return;
+        }
+
+        setView(newView);
+        if (newView === 'list') {
+            // Don't clear selection if we are just closing a modal, 
+            // but if we are explicitly navigating to list, maybe we should?
+            // For now, let's keep selection state unless explicitly cleared
         }
     };
 
@@ -181,8 +228,6 @@ export function LicenseManager() {
                         </div>
                     </div>
                 );
-            case 'settings':
-                return <SettingsPanel />;
             case 'list':
             default:
                 return (
@@ -195,9 +240,11 @@ export function LicenseManager() {
                         <div className="flex flex-1 overflow-hidden">
                             <div className={`${selectedLicenseId ? 'hidden md:block md:w-1/2 lg:w-2/5' : 'w-full md:w-1/2 lg:w-2/5'} border-r border-slate-200 dark:border-slate-700`}>
                                 <LicenseListPanel
-                                    licenses={filteredLicenses}
+                                    licenses={sortedLicenses}
                                     selectedLicenseId={selectedLicenseId || undefined}
                                     onSelectLicense={handleSelectLicense}
+                                    sortOption={sortOption}
+                                    onSortChange={setSortOption}
                                 />
                             </div>
                             <div className={`${selectedLicenseId ? 'w-full md:w-1/2 lg:w-3/5' : 'hidden md:block md:w-1/2 lg:w-3/5'} bg-slate-50 dark:bg-slate-900`}>
@@ -225,6 +272,25 @@ export function LicenseManager() {
             <main className="flex-1 flex flex-col min-w-0 overflow-hidden">
                 {renderContent()}
             </main>
+
+            <Modal
+                isOpen={isAddLicenseOpen}
+                onClose={() => setIsAddLicenseOpen(false)}
+                title={t('addLicense')}
+            >
+                <LicenseForm
+                    onSuccess={() => setIsAddLicenseOpen(false)}
+                    onCancel={() => setIsAddLicenseOpen(false)}
+                />
+            </Modal>
+
+            <Modal
+                isOpen={isSettingsOpen}
+                onClose={() => setIsSettingsOpen(false)}
+                title={t('settings')}
+            >
+                <SettingsPanel />
+            </Modal>
         </div>
     );
 }

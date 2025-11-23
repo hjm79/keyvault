@@ -144,6 +144,16 @@ export const translations = {
         importSuccess: "가져오기 성공",
         importResult: "가져옴: {imported}, 건너뜀: {skipped}, 전체: {total}",
         loading: "로딩 중...",
+
+        // Filter & Sort
+        filter: "필터",
+        sortDefault: "기본 순서",
+        sortNameAsc: "이름 (A-Z)",
+        sortNameDesc: "이름 (Z-A)",
+        sortAddedDesc: "최신 추가순",
+        sortAddedAsc: "오래된 추가순",
+        sortModifiedDesc: "최신 수정순",
+        sortModifiedAsc: "오래된 수정순",
     },
     en: {
         // Sidebar
@@ -289,5 +299,15 @@ export const translations = {
         importSuccess: "Import Successful",
         importResult: "Imported: {imported}, Skipped: {skipped}, Total: {total}",
         loading: "Loading...",
-    }
+
+        // Filter & Sort
+        filter: "Filter",
+        sortDefault: "Default Order",
+        sortNameAsc: "Name (A to Z)",
+        sortNameDesc: "Name (Z to A)",
+        sortAddedDesc: "Recently Added",
+        sortAddedAsc: "Oldest Added",
+        sortModifiedDesc: "Recently Modified",
+        sortModifiedAsc: "Oldest Modified",
+    },
 };

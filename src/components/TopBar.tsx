@@ -36,7 +36,7 @@ export function TopBar({ searchQuery, onSearchChange, onAddLicense }: TopBarProp
                 {/* Add License Button */}
                 <button
                     onClick={onAddLicense}
-                    className="flex items-center gap-2 px-4 py-2 bg-indigo-600 hover:bg-indigo-700 text-white rounded-lg font-medium transition-colors shadow-sm hover:shadow-md"
+                    className="flex items-center gap-2 px-4 py-2 bg-indigo-600 hover:bg-indigo-700 text-white rounded-lg font-medium transition-all duration-300 shadow-sm hover:shadow-[0_0_15px_rgba(99,102,241,0.5)]"
                     style={{ WebkitAppRegion: 'no-drag' } as React.CSSProperties}
                 >
                     <Plus className="h-5 w-5" />

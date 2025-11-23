@@ -1,5 +1,7 @@
 export type Category = string;
 
+export type SortOption = 'default' | 'name-asc' | 'name-desc' | 'added-desc' | 'added-asc' | 'modified-desc' | 'modified-asc';
+
 export interface License {
   id: string;
   name: string; // 프로그램명
@@ -16,6 +18,8 @@ export interface License {
   memo?: string; // 메모
   price?: string; // 가격
   brewCaskCommand?: string; // Brew cask 설치 명령어
+  createdAt?: string; // 생성일
+  updatedAt?: string; // 수정일
 }
 
 export interface ElectronAPI {

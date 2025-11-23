@@ -102,12 +102,21 @@ export function LicensesProvider({ children }: { children: React.ReactNode }) {
     };
 
     const addLicense = async (license: License) => {
-        const newLicenses = [...licenses, license];
+        const newLicense = {
+            ...license,
+            createdAt: new Date().toISOString(),
+            updatedAt: new Date().toISOString()
+        };
+        const newLicenses = [...licenses, newLicense];
         await saveLicensesData(newLicenses);
     };
 
     const updateLicense = async (updated: License) => {
-        const newLicenses = licenses.map((l) => (l.id === updated.id ? updated : l));
+        const updatedLicense = {
+            ...updated,
+            updatedAt: new Date().toISOString()
+        };
+        const newLicenses = licenses.map((l) => (l.id === updatedLicense.id ? updatedLicense : l));
         await saveLicensesData(newLicenses);
     };
 

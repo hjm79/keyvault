@@ -35,7 +35,7 @@ export function SettingsPanel() {
             }
 
             const latestVersion = result.data.tagName.replace('v', '');
-            const currentVersion = '1.2.0';
+            const currentVersion = '1.3.0';
 
             console.log('Latest version:', latestVersion);
             console.log('Current version:', currentVersion);
@@ -118,20 +118,7 @@ export function SettingsPanel() {
     return (
         <div className="h-full overflow-y-auto bg-slate-50 dark:bg-slate-900">
             <div className="mx-auto max-w-4xl">
-                <div
-                    className="mb-8 p-8 pb-4"
-                    style={{ WebkitAppRegion: 'drag' } as React.CSSProperties}
-                >
-                    <h1 className="text-3xl font-bold text-slate-900 dark:text-white flex items-center gap-3">
-                        <Settings className="h-8 w-8" />
-                        {t('settingsTitle')}
-                    </h1>
-                    <p className="mt-2 text-slate-600 dark:text-slate-400">
-                        {t('settingsDesc')}
-                    </p>
-                </div>
-
-                <div className="px-8">
+                <div className="px-8 py-6">
 
                     <div className="space-y-6">
                         {/* Language Settings */}
@@ -309,7 +296,7 @@ export function SettingsPanel() {
 
                                 <div className="flex justify-between items-center py-2 border-b border-slate-200 dark:border-slate-700">
                                     <span className="text-slate-600 dark:text-slate-400">{t('version')}</span>
-                                    <span className="font-semibold text-slate-900 dark:text-white">1.2.0</span>
+                                    <span className="font-semibold text-slate-900 dark:text-white">1.3.0</span>
                                 </div>
 
                                 <div className="flex justify-between items-center py-2 border-b border-slate-200 dark:border-slate-700">

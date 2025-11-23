@@ -1,22 +1,92 @@
-import { License } from "@/types";
-import { User } from "lucide-react";
+import { License, SortOption } from "@/types";
+import { User, ListFilter, Check, ArrowDownAZ, ArrowUpAZ, Calendar, Clock } from "lucide-react";
 import { useLanguage } from "./LanguageProvider";
+import { useState, useRef, useEffect } from "react";
 
 interface LicenseListPanelProps {
     licenses: License[];
     selectedLicenseId?: string;
     onSelectLicense: (id: string) => void;
+    sortOption: SortOption;
+    onSortChange: (option: SortOption) => void;
 }
 
 export function LicenseListPanel({
     licenses,
     selectedLicenseId,
     onSelectLicense,
+    sortOption,
+    onSortChange,
 }: LicenseListPanelProps) {
     const { t } = useLanguage();
+    const [isSortMenuOpen, setIsSortMenuOpen] = useState(false);
+    const sortMenuRef = useRef<HTMLDivElement>(null);
+
+    useEffect(() => {
+        const handleClickOutside = (event: MouseEvent) => {
+            if (sortMenuRef.current && !sortMenuRef.current.contains(event.target as Node)) {
+                setIsSortMenuOpen(false);
+            }
+        };
+
+        if (isSortMenuOpen) {
+            document.addEventListener("mousedown", handleClickOutside);
+        }
+
+        return () => {
+            document.removeEventListener("mousedown", handleClickOutside);
+        };
+    }, [isSortMenuOpen]);
+
+    const sortOptions: { value: SortOption; label: string; icon?: React.ElementType }[] = [
+        { value: 'default', label: t('sortDefault') },
+        { value: 'name-asc', label: t('sortNameAsc'), icon: ArrowDownAZ },
+        { value: 'name-desc', label: t('sortNameDesc'), icon: ArrowUpAZ },
+        { value: 'added-desc', label: t('sortAddedDesc'), icon: Calendar },
+        { value: 'added-asc', label: t('sortAddedAsc'), icon: Calendar },
+        { value: 'modified-desc', label: t('sortModifiedDesc'), icon: Clock },
+        { value: 'modified-asc', label: t('sortModifiedAsc'), icon: Clock },
+    ];
 
     return (
         <div className="flex flex-col h-full bg-white dark:bg-slate-900 border-r border-slate-200 dark:border-slate-700 w-full shrink-0 select-none">
+            {/* Filter Header */}
+            <div className="px-4 py-3 border-b border-slate-200 dark:border-slate-700 flex items-center shrink-0">
+                <div className="relative" ref={sortMenuRef}>
+                    <button
+                        onClick={() => setIsSortMenuOpen(!isSortMenuOpen)}
+                        className={`flex items-center transition-all duration-200 hover:scale-105 hover:drop-shadow-[0_0_8px_rgba(99,102,241,0.5)] ${isSortMenuOpen ? 'text-indigo-600 dark:text-indigo-400' : 'text-slate-500 dark:text-slate-400 hover:text-slate-700 dark:hover:text-slate-200'}`}
+                        title={t('filter')}
+                    >
+                        <span className="text-sm font-medium mr-2">{t('filter')}</span>
+                        <ListFilter className="h-4 w-4" />
+                    </button>
+
+                    {isSortMenuOpen && (
+                        <div className="absolute left-0 top-full mt-1 w-56 bg-white dark:bg-slate-800 rounded-lg shadow-lg border border-slate-200 dark:border-slate-700 py-1 z-20">
+                            {sortOptions.map((option) => (
+                                <button
+                                    key={option.value}
+                                    onClick={() => {
+                                        onSortChange(option.value);
+                                        setIsSortMenuOpen(false);
+                                    }}
+                                    className="w-full text-left px-4 py-2 text-sm text-slate-700 dark:text-slate-200 hover:bg-slate-50 dark:hover:bg-slate-700 flex items-center justify-between group"
+                                >
+                                    <div className="flex items-center">
+                                        {option.icon && <option.icon className="h-4 w-4 mr-2 text-slate-400 group-hover:text-slate-500 dark:group-hover:text-slate-300" />}
+                                        <span>{option.label}</span>
+                                    </div>
+                                    {sortOption === option.value && (
+                                        <Check className="h-4 w-4 text-indigo-600 dark:text-indigo-400" />
+                                    )}
+                                </button>
+                            ))}
+                        </div>
+                    )}
+                </div>
+            </div>
+
             <div className="flex-1 overflow-y-auto">
                 <ul className="divide-y divide-slate-200 dark:divide-slate-700">
                     {(licenses || []).map((license) => (
