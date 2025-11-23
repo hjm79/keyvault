@@ -14,7 +14,7 @@ export function TopBar({ searchQuery, onSearchChange, onAddLicense }: TopBarProp
 
     return (
         <div
-            className="bg-white dark:bg-slate-900 border-b border-slate-200 dark:border-slate-700 px-6 py-4"
+            className="bg-white dark:bg-zinc-800 border-b border-slate-200 dark:border-zinc-700 px-6 py-4"
             style={{ WebkitAppRegion: 'drag' } as React.CSSProperties}
         >
             <div className="flex items-center gap-4">

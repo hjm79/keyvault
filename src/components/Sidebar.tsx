@@ -138,10 +138,10 @@ export function Sidebar({ currentView, onNavigate, selectedCategory, onSelectCat
     };
 
     return (
-        <div className="flex h-full w-64 flex-col bg-slate-800 dark:bg-slate-800 text-white shrink-0 border-r border-slate-700 select-none">
+        <div className="flex h-full w-64 flex-col bg-stone-50 dark:bg-zinc-900 text-slate-900 dark:text-white shrink-0 border-r border-stone-200 dark:border-zinc-800 select-none">
             {/* Draggable titlebar region for macOS window dragging */}
             <div
-                className="flex items-center px-4 pt-8 pb-4 border-b border-slate-700"
+                className="flex items-center px-4 pt-8 pb-4 border-b border-stone-200 dark:border-zinc-800"
                 style={{ WebkitAppRegion: 'drag' } as React.CSSProperties}
             >
                 <img
@@ -164,8 +164,8 @@ export function Sidebar({ currentView, onNavigate, selectedCategory, onSelectCat
                         className={cn(
                             "group w-full flex items-center px-3 py-2 text-sm font-medium rounded-md transition-colors",
                             selectedCategory === null
-                                ? "bg-slate-800 text-white"
-                                : "text-slate-400 hover:bg-slate-800 hover:text-white"
+                                ? "bg-stone-200 dark:bg-zinc-800 text-stone-900 dark:text-white"
+                                : "text-stone-600 dark:text-zinc-400 hover:bg-stone-100 dark:hover:bg-zinc-800 hover:text-stone-900 dark:hover:text-white"
                         )}
                     >
                         <Key className="mr-3 h-5 w-5 transition-transform duration-200 group-hover:scale-[1.15]" />
@@ -178,7 +178,7 @@ export function Sidebar({ currentView, onNavigate, selectedCategory, onSelectCat
                     <button
                         onClick={handleImport}
                         disabled={isProcessing}
-                        className="group w-full flex items-center px-3 py-2 text-sm font-medium rounded-md text-slate-400 hover:bg-slate-800 hover:text-white transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+                        className="group w-full flex items-center px-3 py-2 text-sm font-medium rounded-md text-stone-600 dark:text-zinc-400 hover:bg-stone-100 dark:hover:bg-zinc-800 hover:text-stone-900 dark:hover:text-white transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
                     >
                         <Upload className="mr-3 h-5 w-5 transition-transform duration-200 group-hover:scale-[1.15]" />
                         {t('import')}
@@ -186,7 +186,7 @@ export function Sidebar({ currentView, onNavigate, selectedCategory, onSelectCat
                     <button
                         onClick={handleExport}
                         disabled={isProcessing}
-                        className="group w-full flex items-center px-3 py-2 text-sm font-medium rounded-md text-slate-400 hover:bg-slate-800 hover:text-white transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+                        className="group w-full flex items-center px-3 py-2 text-sm font-medium rounded-md text-stone-600 dark:text-zinc-400 hover:bg-stone-100 dark:hover:bg-zinc-800 hover:text-stone-900 dark:hover:text-white transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
                     >
                         <Download className="mr-3 h-5 w-5 transition-transform duration-200 group-hover:scale-[1.15]" />
                         {t('export')}
@@ -209,7 +209,7 @@ export function Sidebar({ currentView, onNavigate, selectedCategory, onSelectCat
                             }
                         }}
                         disabled={isProcessing}
-                        className="group w-full flex items-center px-3 py-2 text-sm font-medium rounded-md text-slate-400 hover:bg-slate-800 hover:text-white transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+                        className="group w-full flex items-center px-3 py-2 text-sm font-medium rounded-md text-stone-600 dark:text-zinc-400 hover:bg-stone-100 dark:hover:bg-zinc-800 hover:text-stone-900 dark:hover:text-white transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
                     >
                         <FileSpreadsheet className="mr-3 h-5 w-5 transition-transform duration-200 group-hover:scale-[1.15]" />
                         {t('exportExcel')}
@@ -218,10 +218,10 @@ export function Sidebar({ currentView, onNavigate, selectedCategory, onSelectCat
 
                 {/* Categories */}
                 <div>
-                    <div className="px-3 mb-2 flex items-center justify-between text-xs font-semibold text-slate-500 uppercase tracking-wider">
+                    <div className="px-3 mb-2 flex items-center justify-between text-xs font-semibold text-slate-500 dark:text-slate-500 uppercase tracking-wider">
                         <span>{t('categories')}</span>
                         <button onClick={handleAddCategory} title={t('addCategory')}>
-                            <Plus className="h-4 w-4 cursor-pointer hover:text-white" />
+                            <Plus className="h-4 w-4 cursor-pointer hover:text-stone-900 dark:hover:text-white" />
                         </button>
                     </div>
                     <div className="space-y-1">
@@ -233,8 +233,8 @@ export function Sidebar({ currentView, onNavigate, selectedCategory, onSelectCat
                                     className={cn(
                                         "group w-full flex items-center justify-between px-3 py-2 text-sm font-medium rounded-md transition-colors cursor-pointer",
                                         selectedCategory === category
-                                            ? "bg-slate-800 text-white"
-                                            : "text-slate-400 hover:bg-slate-800 hover:text-white"
+                                            ? "bg-stone-200 dark:bg-zinc-800 text-stone-900 dark:text-white"
+                                            : "text-stone-600 dark:text-zinc-400 hover:bg-stone-100 dark:hover:bg-zinc-800 hover:text-stone-900 dark:hover:text-white"
                                     )}
                                     onClick={() => {
                                         onSelectCategory(category);
@@ -248,13 +248,13 @@ export function Sidebar({ currentView, onNavigate, selectedCategory, onSelectCat
                                     <div className="flex items-center space-x-2">
                                         <span className={cn(
                                             "text-xs px-2 py-0.5 rounded-full",
-                                            selectedCategory === category ? "bg-slate-700" : "bg-slate-800 group-hover:bg-slate-700"
+                                            selectedCategory === category ? "bg-stone-300 dark:bg-zinc-700 text-stone-900 dark:text-white" : "bg-stone-200 dark:bg-zinc-800 group-hover:bg-stone-300 dark:group-hover:bg-zinc-700 text-stone-900 dark:text-white"
                                         )}>
                                             {count}
                                         </span>
                                         <button
                                             onClick={(e) => handleEditCategory(category, e)}
-                                            className="opacity-0 group-hover:opacity-100 p-1 hover:text-white transition-opacity"
+                                            className="opacity-0 group-hover:opacity-100 p-1 hover:text-stone-900 dark:hover:text-white transition-opacity"
                                             title={t('editCategory')}
                                         >
                                             <Edit2 className="h-3 w-3" />
@@ -268,14 +268,14 @@ export function Sidebar({ currentView, onNavigate, selectedCategory, onSelectCat
             </div>
 
             {/* Footer / Settings */}
-            <div className="p-4 border-t border-slate-800 space-y-3">
+            <div className="p-4 border-t border-stone-200 dark:border-zinc-800 space-y-3">
                 <button
                     onClick={() => onNavigate('settings')}
                     className={cn(
                         "w-full flex items-center px-3 py-2 text-sm font-medium rounded-md transition-colors",
                         pathname === "/settings"
-                            ? "text-slate-400 hover:bg-slate-800 hover:text-white"
-                            : "text-slate-400 hover:bg-slate-800 hover:text-white"
+                            ? "text-stone-600 dark:text-zinc-400 hover:bg-stone-100 dark:hover:bg-zinc-800 hover:text-stone-900 dark:hover:text-white"
+                            : "text-stone-600 dark:text-zinc-400 hover:bg-stone-100 dark:hover:bg-zinc-800 hover:text-stone-900 dark:hover:text-white"
                     )}
                 >
                     <Settings className="mr-3 h-5 w-5" />
@@ -285,11 +285,11 @@ export function Sidebar({ currentView, onNavigate, selectedCategory, onSelectCat
                 {/* Theme Switcher */}
                 <button
                     onClick={cycleTheme}
-                    className="w-full flex items-center justify-between px-3 py-2 rounded-md bg-slate-800 border border-slate-700 hover:bg-slate-700 transition-all duration-200 shadow-sm text-slate-300"
+                    className="w-full flex items-center justify-between px-3 py-2 rounded-md bg-stone-100 dark:bg-zinc-800 border border-stone-300 dark:border-zinc-700 hover:bg-stone-200 dark:hover:bg-zinc-700 transition-all duration-200 shadow-sm text-stone-700 dark:text-zinc-300"
                     title={t('theme')}
                 >
                     <div className="flex items-center">
-                        <currentThemeOption.icon className="h-4 w-4 mr-2 text-slate-400" />
+                        <currentThemeOption.icon className="h-4 w-4 mr-2 text-slate-600 dark:text-slate-400" />
                         <span className="text-sm">{currentThemeOption.label}</span>
                     </div>
                 </button>

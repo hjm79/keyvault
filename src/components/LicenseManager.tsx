@@ -169,7 +169,7 @@ export function LicenseManager() {
         switch (view) {
             case 'create':
                 return (
-                    <div className="flex flex-col h-full bg-slate-50 dark:bg-slate-900">
+                    <div className="flex flex-col h-full bg-slate-50 dark:bg-zinc-800">
                         <div
                             className="h-12 shrink-0"
                             style={{ WebkitAppRegion: 'drag' } as React.CSSProperties}
@@ -199,7 +199,7 @@ export function LicenseManager() {
                 );
             case 'edit':
                 return (
-                    <div className="flex flex-col h-full bg-slate-50 dark:bg-slate-900">
+                    <div className="flex flex-col h-full bg-slate-50 dark:bg-zinc-800">
                         <div
                             className="h-12 shrink-0"
                             style={{ WebkitAppRegion: 'drag' } as React.CSSProperties}
@@ -247,7 +247,7 @@ export function LicenseManager() {
                                     onSortChange={setSortOption}
                                 />
                             </div>
-                            <div className={`${selectedLicenseId ? 'w-full md:w-1/2 lg:w-3/5' : 'hidden md:block md:w-1/2 lg:w-3/5'} bg-slate-50 dark:bg-slate-900`}>
+                            <div className={`${selectedLicenseId ? 'w-full md:w-1/2 lg:w-3/5' : 'hidden md:block md:w-1/2 lg:w-3/5'} bg-slate-50 dark:bg-zinc-800`}>
                                 <LicenseDetailPanel
                                     licenseId={selectedLicenseId || undefined}
                                     onEdit={handleEditLicense}

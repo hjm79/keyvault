@@ -49,7 +49,7 @@ export function LicenseListPanel({
     ];
 
     return (
-        <div className="flex flex-col h-full bg-white dark:bg-slate-900 border-r border-slate-200 dark:border-slate-700 w-full shrink-0 select-none">
+        <div className="flex flex-col h-full bg-white dark:bg-zinc-800 border-r border-slate-200 dark:border-zinc-700 w-full shrink-0 select-none">
             {/* Filter Header */}
             <div className="px-4 py-3 border-b border-slate-200 dark:border-slate-700 flex items-center shrink-0">
                 <div className="relative" ref={sortMenuRef}>

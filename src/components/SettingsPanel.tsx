@@ -116,7 +116,7 @@ export function SettingsPanel() {
     ];
 
     return (
-        <div className="h-full overflow-y-auto bg-slate-50 dark:bg-slate-900">
+        <div className="h-full overflow-y-auto bg-slate-50 dark:bg-zinc-800">
             <div className="mx-auto max-w-4xl">
                 <div className="px-8 py-6">
 

@@ -59,7 +59,7 @@ export function LicenseDetailPanel({ licenseId, onEdit, onDelete, onClose }: Lic
     if (!license) {
         return (
             <div
-                className="flex-1 flex items-center justify-center bg-slate-50 dark:bg-slate-900 text-slate-500 dark:text-slate-400"
+                className="flex-1 flex items-center justify-center bg-slate-50 dark:bg-zinc-800 text-slate-500 dark:text-slate-400"
                 style={{ WebkitAppRegion: 'drag' } as React.CSSProperties}
             >
                 <div className="text-center">
@@ -71,7 +71,7 @@ export function LicenseDetailPanel({ licenseId, onEdit, onDelete, onClose }: Lic
     }
 
     return (
-        <div className="flex-1 flex flex-col h-full bg-slate-50 dark:bg-slate-900 overflow-y-auto">
+        <div className="flex-1 flex flex-col h-full bg-slate-50 dark:bg-zinc-800 overflow-y-auto">
             {/* Header */}
             <div
                 className="bg-white dark:bg-slate-800 border-b border-slate-200 dark:border-slate-700 p-8 pt-12"
